@@ -14,10 +14,6 @@ function to2(value: number): string {
 }
 
 export function getDeltaPercent(oldPrice: number, currentPrice: number): number {
-    if (oldPrice === currentPrice) {
-        return 0;
-    }
-
     if (currentPrice > oldPrice) {
         return (currentPrice / oldPrice - 1) * 100;
     }
@@ -25,6 +21,8 @@ export function getDeltaPercent(oldPrice: number, currentPrice: number): number 
     if (currentPrice < oldPrice) {
         return -(oldPrice / currentPrice - 1) * 100;
     }
+
+    return 0;
 }
 
 function formatDeltaPercent(percent: number): string {
