@@ -9,4 +9,4 @@ sudo docker build -f ./Dockerfile -t trader-frontend .
 sudo docker stop trader-frontend || true
 sudo docker rm trader-frontend || true
 
-sudo docker run --init -d --name trader-frontend -p 3006:3000 --restart=always trader-frontend
+sudo docker run --init -d --name trader-frontend -p 3006:80 --restart=always trader-frontend
