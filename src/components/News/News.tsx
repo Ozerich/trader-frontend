@@ -124,12 +124,6 @@ const PriceContainer = styled.span`
 `;
 
 
-const Links = styled.div`
-    display: flex;
-    gap: 15px;
-`;
-
-
 const Actions = styled.div`
     display: flex;
     gap: 15px;
