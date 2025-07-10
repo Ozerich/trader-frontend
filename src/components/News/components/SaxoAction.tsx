@@ -1,25 +1,32 @@
 import React from 'react';
 import styled from "styled-components";
 import {usePrices} from "../../../contexts/price.context.tsx";
+import {saxoOrder} from "../../../services/saxo.ts";
 
 type Props = {
     ticker: string;
     total: number;
     basePrice: number;
 }
+
+const KOEFFICIENT = 1.05;
+
 const SaxoAction: React.FC<Props> = ({total, ticker, basePrice}) => {
     const {state: prices} = usePrices();
 
+
     const askPrice = ticker in prices ? prices[ticker].a : basePrice;
-    const price = Math.round(askPrice * 1.05 * 100) / 100;
+    const price = Math.round(askPrice * KOEFFICIENT * 100) / 100;
 
     const quantity = Math.floor(total / askPrice);
 
-    const url = `https://saxo-service.ozerich.com/order/${ticker}?quantity=${quantity}&price=${price}`
+    const onClick = async () => {
+        const response = await saxoOrder(ticker, quantity, price);
+        alert('Ордер выставлен: ' + response.orderId);
+    }
 
     return (
-        <Component href={url}
-                   target="_blank">
+        <Component onClick={onClick}>
             {total} $
         </Component>
     );
@@ -27,7 +34,7 @@ const SaxoAction: React.FC<Props> = ({total, ticker, basePrice}) => {
 
 export default SaxoAction;
 
-const Component = styled.a`
+const Component = styled.button`
     cursor: pointer;
     text-decoration: none;
     border: 1px solid #aaa;
