@@ -17,7 +17,7 @@ function App() {
         socket.on("new_event", (data: NewsEvent) => {
             audio.play();
 
-            setEvents(events => [data, ...events]);
+            setEvents(events => [...events, data]);
 
             socket.emit("subscribe_ticker", data.ticker);
         });
