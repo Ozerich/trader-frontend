@@ -2,6 +2,7 @@ import React from 'react';
 import styled from "styled-components";
 import type {NewsEvent} from "../../types.ts";
 import Price from "../../containers/Price.tsx";
+import SaxoAction from "./components/SaxoAction.tsx";
 
 type Props = {
     model: NewsEvent,
@@ -50,7 +51,14 @@ const News: React.FC<Props> = ({model, onRemoveClick}) => {
                         TradingView
                     </Link>
                 </Links>
-                <RemoveButton onClick={onRemoveClick}>Remove</RemoveButton>
+                <Actions>
+                    {window.location.search?.includes('saxo') ? <>
+                        <SaxoAction ticker={model.ticker} total={100} basePrice={model.price.ask}/>
+                        <SaxoAction ticker={model.ticker} total={500} basePrice={model.price.ask}/>
+                        <SaxoAction ticker={model.ticker} total={1000} basePrice={model.price.ask}/>
+                    </> : null}
+                    <RemoveButton onClick={onRemoveClick}>Remove</RemoveButton>
+                </Actions>
             </Bottom>
         </Component>
     )
@@ -127,6 +135,13 @@ const PriceItemVolume = styled.span`
 const Links = styled.div`
     display: flex;
     gap: 15px;
+`;
+
+
+const Actions = styled.div`
+    display: flex;
+    gap: 15px;
+    align-items: center;
 `;
 
 const Bottom = styled.div`
