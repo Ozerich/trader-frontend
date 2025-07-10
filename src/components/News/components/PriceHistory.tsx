@@ -6,9 +6,6 @@ type Props = {
     data: NewsEventActivity;
 }
 const PriceHistory: React.FC<Props> = ({data}) => {
-
-    console.log(data);
-
     if (!data.length) {
         return null;
     }
