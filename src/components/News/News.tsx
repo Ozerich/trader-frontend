@@ -1,8 +1,12 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from "styled-components";
 import type {NewsEvent} from "../../types.ts";
 import Price from "../../containers/Price.tsx";
 import SaxoAction from "./components/SaxoAction.tsx";
+import PriceHistory from "./components/PriceHistory.tsx";
+import NewsTime from "./components/NewsTime/NewsTime.tsx";
+import NewsTicker from "./components/NewsTicker.tsx";
+import {diffTimeInSeconds} from "./components/NewsTime/NewsTime.utils.ts";
 
 type Props = {
     model: NewsEvent,
@@ -11,22 +15,34 @@ type Props = {
 
 const News: React.FC<Props> = ({model, onRemoveClick}) => {
 
+    const [secondsDiff, setSecondsDiff] = useState<number>(0);
+
+    useEffect(() => {
+        const updateTimeDiff = () => {
+            setSecondsDiff(diffTimeInSeconds(model.time));
+        };
+
+        updateTimeDiff();
+
+        const intervalId = setInterval(updateTimeDiff, 1000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
+    const isExpired = secondsDiff > 30;
+
     return (
-        <Component>
+        <Component $expired={isExpired}>
             <Header>
-                <Time>{model.time}</Time>
-                <Ticker>{model.ticker}</Ticker>
+                <NewsTime value={model.time} seconds={secondsDiff} isExpired={isExpired}/>
+                <NewsTicker value={model.ticker}/>
                 <PriceContainer>
-                    <Price ticker={model.ticker} defaultAsk={model.price.ask} defaultBid={model.price.bid}
-                           basePrice={model.basePrice}/>
-                    <PriceHistory>
-                        {model.activity.map(item => {
-                            return <PriceItem>
-                                <PriceItemRange>{item.open} → {item.close}</PriceItemRange>
-                                <PriceItemVolume>{item.volume}</PriceItemVolume>
-                            </PriceItem>
-                        })}
-                    </PriceHistory>
+                    <PriceHistory data={model.activity}/>
+                    <Price ticker={model.ticker}
+                           defaultAsk={model.price.ask}
+                           defaultBid={model.price.bid}
+                           basePrice={model.basePrice}
+                    />
                 </PriceContainer>
             </Header>
 
@@ -66,25 +82,20 @@ const News: React.FC<Props> = ({model, onRemoveClick}) => {
 
 export default News;
 
-const Component = styled.div`
+
+const Component = styled.div<{ $expired: boolean }>`
     border: 1px solid #eee;
     padding: 5px;
+    background: ${props => props.$expired ? '#fff3f3' : '#d3fbd3'};
 `;
 
-
-const Time = styled.div`
-
-`;
-
-const Ticker = styled.span`
-    font-weight: bold;
-`;
 
 const Header = styled.div`
     display: flex;
-    gap: 10px;
+    gap: 30px;
     border-bottom: 1px dashed #eee;
     padding: 15px;
+    align-items: center;
 `;
 
 const Content = styled.div`
@@ -105,32 +116,10 @@ const Subtitle = styled.p`
 const PriceContainer = styled.span`
     margin-left: auto;
     display: flex;
-    flex-direction: column;
-    gap: 5px;
-    align-items: flex-end;
+    gap: 20px;
+    align-items: center;
 `;
 
-const PriceHistory = styled.div`
-    display: flex;
-    gap: 10px;
-`;
-
-
-const PriceItem = styled.span`
-    font-size: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-`;
-
-const PriceItemRange = styled.div`
-
-`;
-
-const PriceItemVolume = styled.span`
-    display: block;
-    text-align: center;
-`;
 
 const Links = styled.div`
     display: flex;
