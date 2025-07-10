@@ -5,14 +5,18 @@ import styled from "styled-components";
 import type {NewsEvent} from "./types.ts";
 import {usePrices} from "./contexts/price.context.tsx";
 
+const audio = new Audio('/news-sound.mp3');
+
 function App() {
     const {dispatch} = usePrices();
 
     const [events, setEvents] = useState<Array<NewsEvent>>([]);
 
+
     useEffect(() => {
         socket.on("new_event", (data: NewsEvent) => {
-            console.log("Пришёл ивент:", data);
+            audio.play();
+
             setEvents(events => [data, ...events]);
 
             socket.emit("subscribe_ticker", data.ticker);
