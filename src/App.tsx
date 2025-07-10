@@ -36,7 +36,7 @@ function App() {
     return (
         <List>
             {
-                (events.map((item, index: number) => {
+                (events.map((item) => {
                     return <News model={item} key={item.id} onRemoveClick={() => removeNews(item.id, item.ticker)}/>
                 }))
             }
