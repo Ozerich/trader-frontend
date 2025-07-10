@@ -47,9 +47,7 @@ const Price: React.FC<Props> = ({ticker, defaultAsk, defaultBid, basePrice}) => 
     const askPrice = ticker in prices ? prices[ticker].a : defaultAsk;
     const bidPrice = ticker in prices ? prices[ticker].b : defaultBid;
 
-    const midPrice = askPrice + (bidPrice - askPrice) / 2;
-
-    const deltaPercent = getDeltaPercent(basePrice, midPrice);
+    const deltaPercent = getDeltaPercent(basePrice, askPrice);
 
     return (
         <Component $mode={deltaPercent > 0 ? 'positive' : (deltaPercent < 0 ? 'negative' : '')}>
