@@ -163,5 +163,3 @@ const RemoveButton = styled.button`
         color: white;
     }
 `;
-
-const Link = styled.a``;
