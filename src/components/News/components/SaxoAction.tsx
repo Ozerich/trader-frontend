@@ -15,7 +15,7 @@ const SaxoAction: React.FC<Props> = ({total, ticker, basePrice}) => {
 
     const quantity = Math.floor(total / askPrice);
 
-    const url = `https://saxo-service.ozerich.com/order/${ticker}/quantity=${quantity}&price=${price}`
+    const url = `https://saxo-service.ozerich.com/order/${ticker}?quantity=${quantity}&price=${price}`
 
     return (
         <Component href={url}
