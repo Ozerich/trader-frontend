@@ -15,5 +15,6 @@ export type NewsEvent = {
         ask: number,
         bid: number,
         mid: number;
-    }
+    },
+    basePrice: number;
 }

@@ -19,7 +19,7 @@ function App() {
         });
 
         socket.on('price_update', (item) => {
-            dispatch({t: item.t, a: item.b, b: item.a});
+            dispatch({t: item.t, a: item.a, b: item.b});
         })
 
         return () => {

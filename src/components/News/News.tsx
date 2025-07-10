@@ -8,13 +8,15 @@ type Props = {
 }
 
 const News: React.FC<Props> = ({model}) => {
+
     return (
         <Component>
             <Header>
                 <Time>{model.time}</Time>
                 <Ticker>{model.ticker}</Ticker>
                 <PriceContainer>
-                    <Price ticker={model.ticker}/>
+                    <Price ticker={model.ticker} defaultAsk={model.price.ask} defaultBid={model.price.bid}
+                           basePrice={model.basePrice}/>
                     <PriceHistory>
                         {model.activity.map(item => {
                             return <PriceItem>

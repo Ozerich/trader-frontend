@@ -4,25 +4,79 @@ import {usePrices} from "../contexts/price.context.tsx";
 
 type Props = {
     ticker: string;
+    defaultBid: number;
+    defaultAsk: number;
+    basePrice: number;
 }
 
-const Price: React.FC<Props> = ({ticker}) => {
-    const {state: prices} = usePrices();
+function to2(value: number): string {
+    return (Math.round(value * 100) / 100).toFixed(2);
+}
 
-    if (!(ticker in prices)) {
-        return null;
+export function getDeltaPercent(oldPrice: number, currentPrice: number): number {
+    if (oldPrice === currentPrice) {
+        return 0;
     }
 
-    console.log(prices);
+    if (currentPrice > oldPrice) {
+        return (currentPrice / oldPrice - 1) * 100;
+    }
+
+    if (currentPrice < oldPrice) {
+        return -(oldPrice / currentPrice - 1) * 100;
+    }
+}
+
+function formatDeltaPercent(percent: number): string {
+    if (percent === 0) {
+        return '0.0%';
+    }
+
+    if (percent > 0) {
+        return '+' + to2(percent) + '%';
+    }
+
+    if (percent < 0) {
+        return to2(percent) + '%';
+    }
+
+    return '';
+}
+
+const Price: React.FC<Props> = ({ticker, defaultAsk, defaultBid, basePrice}) => {
+    const {state: prices} = usePrices();
+
+    const askPrice = ticker in prices ? prices[ticker].a : defaultAsk;
+    const bidPrice = ticker in prices ? prices[ticker].b : defaultBid;
+
+    const midPrice = askPrice + (bidPrice - askPrice) / 2;
+
+    const deltaPercent = getDeltaPercent(basePrice, midPrice);
+
     return (
-        <Component>
-            {prices[ticker].a}..{prices[ticker].b}
+        <Component $mode={deltaPercent > 0 ? 'positive' : (deltaPercent < 0 ? 'negative' : '')}>
+            <PriceValue>
+                {bidPrice.toFixed(2)}..{askPrice.toFixed(2)}
+            </PriceValue>
+            <Percent>{formatDeltaPercent(deltaPercent)}</Percent>
         </Component>
     );
 }
 
 export default Price;
 
-const Component = styled.div`
+const Component = styled.div<{ $mode: string }>`
+    font-size: 24px;
 
+    color: ${props => props.$mode === 'positive' ? 'green' : (props.$mode === 'negative' ? 'red' : '')};
+    display: flex;
+    gap: 5px;
+`;
+
+const Percent = styled.span`
+
+    font-weight: bold;
+`;
+
+const PriceValue = styled.span`
 `;
