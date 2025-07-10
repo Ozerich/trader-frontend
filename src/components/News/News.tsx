@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from "styled-components";
-import type {NewsEvent} from "../types.ts";
+import type {NewsEvent} from "../../types.ts";
+import Price from "../../containers/Price.tsx";
 
 type Props = {
     model: NewsEvent
@@ -12,8 +13,8 @@ const News: React.FC<Props> = ({model}) => {
             <Header>
                 <Time>{model.time}</Time>
                 <Ticker>{model.ticker}</Ticker>
-                <Price>
-                    <PriceValue>{model.price.bid} -- {model.price.ask} USD</PriceValue>
+                <PriceContainer>
+                    <Price ticker={model.ticker}/>
                     <PriceHistory>
                         {model.activity.map(item => {
                             return <PriceItem>
@@ -22,7 +23,7 @@ const News: React.FC<Props> = ({model}) => {
                             </PriceItem>
                         })}
                     </PriceHistory>
-                </Price>
+                </PriceContainer>
             </Header>
 
             <Content>
@@ -87,7 +88,7 @@ const Subtitle = styled.p`
     margin: 0;
 `
 
-const Price = styled.span`
+const PriceContainer = styled.span`
     margin-left: auto;
     display: flex;
     flex-direction: column;
@@ -100,10 +101,6 @@ const PriceHistory = styled.div`
     gap: 10px;
 `;
 
-const PriceValue = styled.span`
-    display: block;
-    font-weight: bold;
-`;
 
 const PriceItem = styled.span`
     font-size: 10px;
