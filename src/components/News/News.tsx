@@ -4,10 +4,11 @@ import type {NewsEvent} from "../../types.ts";
 import Price from "../../containers/Price.tsx";
 
 type Props = {
-    model: NewsEvent
+    model: NewsEvent,
+    onRemoveClick: () => void;
 }
 
-const News: React.FC<Props> = ({model}) => {
+const News: React.FC<Props> = ({model, onRemoveClick}) => {
 
     return (
         <Component>
@@ -34,20 +35,23 @@ const News: React.FC<Props> = ({model}) => {
                 <Subtitle>{model.subtitle}</Subtitle>
             </Content>
 
-            <Links>
-                <Link target="_blank" href={`https://stocktwits.com/symbol/${model.ticker}`}>
-                    StockTwits
-                </Link>
-                <Link target="_blank" href={`https://finance.yahoo.com/quote/${model.ticker}`}>
-                    Finance.Yahoo
-                </Link>
-                <Link target="_blank" href={`https://www.marketwatch.com/investing/stock/${model.ticker}`}>
-                    MarketWatch
-                </Link>
-                <Link target="_blank" href={`https://www.tradingview.com/chart/?symbol=${model.ticker}`}>
-                    TradingView
-                </Link>
-            </Links>
+            <Bottom>
+                <Links>
+                    <Link target="_blank" href={`https://stocktwits.com/symbol/${model.ticker}`}>
+                        StockTwits
+                    </Link>
+                    <Link target="_blank" href={`https://finance.yahoo.com/quote/${model.ticker}`}>
+                        Finance.Yahoo
+                    </Link>
+                    <Link target="_blank" href={`https://www.marketwatch.com/investing/stock/${model.ticker}`}>
+                        MarketWatch
+                    </Link>
+                    <Link target="_blank" href={`https://www.tradingview.com/chart/?symbol=${model.ticker}`}>
+                        TradingView
+                    </Link>
+                </Links>
+                <RemoveButton onClick={onRemoveClick}>Remove</RemoveButton>
+            </Bottom>
         </Component>
     )
 }
@@ -123,8 +127,32 @@ const PriceItemVolume = styled.span`
 const Links = styled.div`
     display: flex;
     gap: 15px;
-    padding: 15px;
+`;
+
+const Bottom = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     border-top: 1px solid #ddd;
+    padding: 15px;
+`;
+
+const RemoveButton = styled.button`
+    color: red;
+    font-weight: bold;
+    font-size: 14px;
+    background: transparent;
+    padding: 5px 10px;
+    border: 1px solid red;
+    cursor: pointer;
+    transition: 0.3s all ease;
+    display: block;
+    border-radius: 5px;
+
+    &:hover {
+        background: red;
+        color: white;
+    }
 `;
 
 const Link = styled.a``;

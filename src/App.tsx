@@ -27,11 +27,17 @@ function App() {
         };
     }, []);
 
+    const removeNews = (id: string, ticker: string) => {
+        setEvents(events.filter(item => item.id !== id));
+
+        socket.emit("unsubscribe_ticker", ticker);
+    }
+
     return (
         <List>
             {
                 (events.map((item, index: number) => {
-                    return <News model={item} key={index}/>
+                    return <News model={item} key={item.id} onRemoveClick={() => removeNews(item.id, item.ticker)}/>
                 }))
             }
         </List>

@@ -1,4 +1,5 @@
 export type NewsEvent = {
+    id: string;
     title: {
         ru: string;
         en: string;
