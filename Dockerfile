@@ -19,7 +19,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # Копируем собранное приложение в папку, обслуживаемую nginx
-COPY --from=build /app/build /usr/share/nginx/html
+COPY --from=build /dist /usr/share/nginx/html
 
 # Копируем nginx-конфиг (опционально)
 # COPY nginx.conf /etc/nginx/nginx.conf
