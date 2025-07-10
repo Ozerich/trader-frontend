@@ -10,19 +10,34 @@ type Props = {
 }
 
 const KOEFFICIENT = 1.05;
+const KOEFFICIENT_LESS = 1.02;
 
 const SaxoAction: React.FC<Props> = ({total, ticker, basePrice}) => {
     const {state: prices} = usePrices();
 
-
     const askPrice = ticker in prices ? prices[ticker].a : basePrice;
+
     const price = Math.round(askPrice * KOEFFICIENT * 100) / 100;
+    const lessPrice = Math.round(askPrice * KOEFFICIENT_LESS * 100) / 100;
 
     const quantity = Math.floor(total / askPrice);
 
     const onClick = async () => {
-        const response = await saxoOrder(ticker, quantity, price);
-        alert('Ордер выставлен: ' + response.orderId);
+        try {
+            const response = await saxoOrder(ticker, quantity, price);
+            alert('Ордер выставлен: ' + response.orderId);
+        } catch (e: any) {
+            if (e.message === 'Цена превышает агрессивный допуск') {
+                try {
+                    const response = await saxoOrder(ticker, quantity, lessPrice);
+                    alert('Ордер #2 выставлен: ' + response.orderId);
+                } catch (e: any) {
+                    alert('Ошибка второго ордера:' + e.message);
+                }
+            } else {
+                alert('Ошибка первого ордера:' + e.message);
+            }
+        }
     }
 
     return (
