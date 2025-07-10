@@ -23,7 +23,9 @@ function App() {
         });
 
         socket.on('price_update', (item) => {
-            dispatch({t: item.t, a: item.a, b: item.b});
+            if (item.t) {
+                dispatch({t: item.t, a: item.a, b: item.b});
+            }
         })
 
         return () => {
@@ -32,9 +34,13 @@ function App() {
     }, []);
 
     const removeNews = (id: string, ticker: string) => {
+        const eventsWithTicker = events.filter(item => item.ticker === ticker);
+
         setEvents(events.filter(item => item.id !== id));
 
-        socket.emit("unsubscribe_ticker", ticker);
+        if (eventsWithTicker.length === 1) {
+            socket.emit("unsubscribe_ticker", ticker);
+        }
     }
 
     return (

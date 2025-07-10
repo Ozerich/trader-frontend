@@ -53,7 +53,7 @@ const News: React.FC<Props> = ({model, onRemoveClick}) => {
             </Content>
 
             <Bottom>
-                <Links>
+                {/*<Links>
                     <Link target="_blank" href={`https://stocktwits.com/symbol/${model.ticker}`}>
                         StockTwits
                     </Link>
@@ -66,7 +66,7 @@ const News: React.FC<Props> = ({model, onRemoveClick}) => {
                     <Link target="_blank" href={`https://www.tradingview.com/chart/?symbol=${model.ticker}`}>
                         TradingView
                     </Link>
-                </Links>
+                </Links>*/}
                 <Actions>
                     {window.location.search?.includes('saxo') ? <>
                         <SaxoAction ticker={model.ticker} total={100} basePrice={model.price.ask}/>
@@ -94,23 +94,26 @@ const Header = styled.div`
     display: flex;
     gap: 30px;
     border-bottom: 1px dashed #eee;
-    padding: 15px;
+    padding: 10px;
     align-items: center;
 `;
 
 const Content = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    padding: 15px;
+    padding: 10px;
+    font-size: 14px;
 `;
 
 const Title = styled.p`
-    margin: 0;
+    margin-bottom: 5px;
 `;
 
 const Subtitle = styled.p`
-    margin: 0;
+    border-top: 1px;
+    margin-top: 5px;
+    padding-top: 5px;
+    font-size: 12px;
 `
 
 const PriceContainer = styled.span`
@@ -131,6 +134,7 @@ const Actions = styled.div`
     display: flex;
     gap: 15px;
     align-items: center;
+    width: 100%;
 `;
 
 const Bottom = styled.div`
@@ -152,6 +156,7 @@ const RemoveButton = styled.button`
     transition: 0.3s all ease;
     display: block;
     border-radius: 5px;
+    margin-left: auto;
 
     &:hover {
         background: red;

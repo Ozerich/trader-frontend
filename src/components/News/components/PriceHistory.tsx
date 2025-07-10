@@ -35,7 +35,7 @@ const Row = styled.div`
 const PricesRow = styled.div`
     display: flex;
     gap: 10px;
-    font-size: 14px;
+    font-size: 12px;
 `;
 
 const Item = styled.div`

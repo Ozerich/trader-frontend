@@ -52,7 +52,7 @@ const Price: React.FC<Props> = ({ticker, defaultAsk, defaultBid, basePrice}) => 
     return (
         <Component $mode={deltaPercent > 0 ? 'positive' : (deltaPercent < 0 ? 'negative' : '')}>
             <PriceValue>
-                {bidPrice.toFixed(2)}..{askPrice.toFixed(2)}
+                {bidPrice?.toFixed(2)}..{askPrice?.toFixed(2)}
             </PriceValue>
             <Percent>{formatDeltaPercent(deltaPercent)}</Percent>
         </Component>
@@ -62,7 +62,7 @@ const Price: React.FC<Props> = ({ticker, defaultAsk, defaultBid, basePrice}) => 
 export default Price;
 
 const Component = styled.div<{ $mode: string }>`
-    font-size: 24px;
+    font-size: 17px;
 
     color: ${props => props.$mode === 'positive' ? 'green' : (props.$mode === 'negative' ? 'red' : '')};
     display: flex;

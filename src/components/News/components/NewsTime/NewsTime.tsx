@@ -21,17 +21,16 @@ export default NewsTime;
 
 const Component = styled.div<{ $expired: boolean }>`
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 5px;
     justify-content: flex-end;
-    align-items: flex-end;
     color: ${props => props.$expired ? 'red' : 'green'};
 `;
 
 const Value = styled.span`
-    font-size: 20px;
+    font-size: 14px;
 `;
 
 const Timer = styled.span`
-    font-size: 12px;
+    font-size: 10px;
 `;
