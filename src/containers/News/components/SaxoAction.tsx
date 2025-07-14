@@ -45,4 +45,10 @@ const Component = styled.button`
     color: #000;
     font-weight: bold;
     font-size: 14px;
+    transition: 0.3s all ease;
+    
+    &:hover{
+        background: #aaa;
+        color: #fff;
+    }
 `;
