@@ -22,7 +22,6 @@ const PriceView: React.FC<Props> = ({ask, bid, basePrice}) => {
     return (
         <Component>
             {bid && ask && <span>{bid}..{ask}</span>}
-
             {percent !== 0 ? <Percent>{percent > 0 ? '+' : ''}{percent}%</Percent> : null}
         </Component>
     );
@@ -31,7 +30,7 @@ const PriceView: React.FC<Props> = ({ask, bid, basePrice}) => {
 export default PriceView;
 
 const Component = styled.div`
-    font-size: 20px;
+    font-size: 16px;
     font-weight: bold;
     color: green;
     display: flex;
