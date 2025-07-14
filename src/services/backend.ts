@@ -1,6 +1,7 @@
 import type {NewsEventActivity} from "../types.ts";
 
-const BACKEND_BASE_URL = "http://localhost:3000"
+const BACKEND_BASE_URL = document.location.href.includes('localhost') ? "http://localhost:3000" : "https://saxo-trader.ozerich.com/api";
+
 
 export async function tickerInfo(ticker: string): Promise<{
     name: string,

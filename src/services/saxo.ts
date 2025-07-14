@@ -1,6 +1,5 @@
 export async function saxoOrder(ticker: string, total: number) {
 
-
     const response = await fetch("https://saxo-service.ozerich.com/order/" + ticker, {
         method: "POST",
         headers: {
