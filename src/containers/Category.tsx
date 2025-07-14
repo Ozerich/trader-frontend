@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from "styled-components";
 import News from "./News";
-import socket from "../socket.ts";
 import {useEventsContext} from "../contexts/events.context.tsx";
 
 type Props = {
@@ -12,9 +11,8 @@ type Props = {
 const Category: React.FC<Props> = ({id, name}) => {
     const {removeEvent, events} = useEventsContext();
 
-    const removeNews = (id: string, ticker: string) => {
+    const removeNews = (id: string) => {
         removeEvent(id);
-        socket.emit("unsubscribe", ticker);
     }
 
     const eventsByCategory = events.filter(item => item.model.category === id);
@@ -25,7 +23,7 @@ const Category: React.FC<Props> = ({id, name}) => {
             <List>
                 {(eventsByCategory.map((item) => {
                     return <News event={item} key={item.model.id}
-                                 onRemoveClick={() => removeNews(item.model.id, item.model.ticker)}/>
+                                 onRemoveClick={() => removeNews(item.model.id)}/>
                 }))}
             </List>
         </Column>
@@ -51,7 +49,7 @@ const Title = styled.span`
 `;
 
 const List = styled.div`
-    padding: 10px;
+    padding: 10px 10px 20px 10px;
     overflow: auto;
     max-height: calc(100vh - 40px);
 

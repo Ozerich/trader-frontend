@@ -17,12 +17,9 @@ function App() {
             console.log('Socket IN - "new_event"', data);
 
             audio.play().catch(() => {
-
             })
 
             addEvent(data);
-
-            socket.emit("subscribe", data.ticker);
         });
 
         return () => {
