@@ -1,35 +1,22 @@
 import React from 'react';
 import styled from "styled-components";
-import {usePrices} from "../../../contexts/price.context.tsx";
 import {saxoOrder} from "../../../services/saxo.ts";
 
 type Props = {
     ticker: string;
     total: number;
-    basePrice: number;
 }
 
-const KOEFFICIENT = 1.05;
-const KOEFFICIENT_LESS = 1.02;
-
-const SaxoAction: React.FC<Props> = ({total, ticker, basePrice}) => {
-    const {state: prices} = usePrices();
-
-    const askPrice = ticker in prices ? prices[ticker].a : basePrice;
-
-    const price = Math.round(askPrice * KOEFFICIENT * 100) / 100;
-    const lessPrice = Math.round(askPrice * KOEFFICIENT_LESS * 100) / 100;
-
-    const quantity = Math.floor(total / askPrice);
+const SaxoAction: React.FC<Props> = ({total, ticker}) => {
 
     const onClick = async () => {
         try {
-            const response = await saxoOrder(ticker, quantity, price);
+            const response = await saxoOrder(ticker, total);
             alert('Ордер выставлен: ' + response.orderId);
         } catch (e: any) {
             if (e.message === 'Цена превышает агрессивный допуск') {
                 try {
-                    const response = await saxoOrder(ticker, quantity, lessPrice);
+                    const response = await saxoOrder(ticker, total);
                     alert('Ордер #2 выставлен: ' + response.orderId);
                 } catch (e: any) {
                     alert('Ошибка второго ордера:' + e.message);
@@ -57,4 +44,5 @@ const Component = styled.button`
     background: #eee;
     color: #000;
     font-weight: bold;
+    font-size: 14px;
 `;

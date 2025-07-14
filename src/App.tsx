@@ -1,59 +1,38 @@
-import {useEffect, useState} from "react";
-import socket from "./socket";
-import News from "./components/News/News.tsx";
+import {useEffect} from "react";
 import styled from "styled-components";
+
+import socket from "./socket";
 import type {NewsEvent} from "./types.ts";
-import {usePrices} from "./contexts/price.context.tsx";
 import {CATEGORIES} from "./categories.ts";
+import Category from "./containers/Category.tsx";
+import {useEventsContext} from "./contexts/events.context.tsx";
 
 const audio = new Audio('/news-sound.mp3');
 
 function App() {
-    const {dispatch} = usePrices();
-
-    const [events, setEvents] = useState<Array<NewsEvent>>([]);
+    const {addEvent} = useEventsContext();
 
     useEffect(() => {
         socket.on("new_event", (data: NewsEvent) => {
-            audio.play();
+            console.log('Socket IN - "new_event"', data);
 
-            setEvents(events => [...events, data]);
+            audio.play().catch(() => {
 
-            socket.emit("subscribe_ticker", data.ticker);
+            })
+
+            addEvent(data);
+
+            socket.emit("subscribe", data.ticker);
         });
 
-        socket.on('price_update', (item) => {
-            if (item.t) {
-                dispatch({t: item.t, a: item.a, b: item.b});
-            }
-        })
-
         return () => {
-            socket.off("new_event");
-        };
-    }, []);
-
-    const removeNews = (id: string, ticker: string) => {
-        const eventsWithTicker = events.filter(item => item.ticker === ticker);
-
-        setEvents(events.filter(item => item.id !== id));
-
-        if (eventsWithTicker.length === 1) {
-            socket.emit("unsubscribe_ticker", ticker);
+            socket.off('new_event');
         }
-    }
+    }, []);
 
     return <Scene>
         {CATEGORIES.map(category => (
-            <Column>
-                <Title>{category.label}</Title>
-                <List>
-                    {(events.filter(item => item.category === category.id).map((item) => {
-                        return <News model={item} key={item.id}
-                                     onRemoveClick={() => removeNews(item.id, item.ticker)}/>
-                    }))}
-                </List>
-            </Column>
+            <Category key={category.id} id={category.id} name={category.label}/>
         ))}
     </Scene>;
 }
@@ -62,31 +41,10 @@ export default App
 
 const Scene = styled.div`
     display: grid;
-    padding: 10px;
     min-height: calc(-40px + 100vh);
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(${CATEGORIES.length}, 1fr);
     grid-template-rows: 1fr;
-`;
-
-const List = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 10px;
-`;
-
-const Column = styled.div`
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    border-right: 1px solid rgb(238, 238, 238);
-    padding: 10px;
-`;
-
-const Title = styled.span`
-    font-weight: bold;
-    display: block;
-    text-align: center;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+    justify-content: center;
+    max-height: 100vh;
+    height: 100vh;
 `;

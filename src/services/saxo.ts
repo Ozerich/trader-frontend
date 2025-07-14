@@ -1,4 +1,4 @@
-export async function saxoOrder(ticker: string, quantity: number, price: number) {
+export async function saxoOrder(ticker: string, total: number) {
 
 
     const response = await fetch("https://saxo-service.ozerich.com/order/" + ticker, {
@@ -6,12 +6,12 @@ export async function saxoOrder(ticker: string, quantity: number, price: number)
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({quantity, price})
+        body: JSON.stringify({total})
     });
 
     const responseRaw = await response.json();
 
-    if(response.status !== 200){
+    if (response.status !== 200) {
         throw new Error(responseRaw.error);
     }
 

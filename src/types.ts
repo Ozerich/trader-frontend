@@ -2,6 +2,7 @@ export type NewsEventActivity = Array<{
     open: number;
     close: number;
     volume: number;
+    time: string;
 }>;
 
 export type NewsEvent = {
@@ -14,11 +15,4 @@ export type NewsEvent = {
     subtitle: string;
     time: string;
     ticker: string;
-    activity: NewsEventActivity;
-    price: {
-        ask: number,
-        bid: number,
-        mid: number;
-    },
-    basePrice: number;
 }
