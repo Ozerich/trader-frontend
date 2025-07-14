@@ -6,6 +6,7 @@ export type NewsEventActivity = Array<{
 
 export type NewsEvent = {
     id: string;
+    category: string;
     title: {
         ru: string;
         en: string;
