@@ -49,8 +49,8 @@ export async function fetchPrice(ticker: string): Promise<{
 }
 
 
-export async function fetchPreMktVolume(ticker: string): Promise<number> {
-    const response = await fetch(BACKEND_BASE_URL + '/tickers/' + ticker + '/premarket-volume', {
+export async function fetchVolume(ticker: string): Promise<number> {
+    const response = await fetch(BACKEND_BASE_URL + '/tickers/' + ticker + '/volume', {
         method: "get",
         headers: {
             "Content-Type": "application/json"

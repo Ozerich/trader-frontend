@@ -7,7 +7,7 @@ import type {ContextEvent} from "../../contexts/events.context.tsx";
 import Info from "./containers/Info.tsx";
 import Price from "./containers/Price/Price.tsx";
 import PriceHistory from "./components/PriceHistory.tsx";
-import {fetchPreMktVolume, fetchPrice, tickerInfo} from "../../services/backend.ts";
+import {fetchPrice, fetchVolume, tickerInfo} from "../../services/backend.ts";
 import type {NewsEventActivity} from "../../types.ts";
 
 type Props = {
@@ -25,7 +25,7 @@ const News: React.FC<Props> = ({event, onRemoveClick}) => {
     const [basePrice, setBasePrice] = useState<number | undefined>();
     const [askPrice, setAskPrice] = useState<number | undefined>();
     const [bidPrice, setBidPrice] = useState<number | undefined>();
-    const [preMktVolume, setPreMktVolume] = useState<number | undefined>();
+    const [volume, setVolume] = useState<number | undefined>();
     const [history, setHistory] = useState<NewsEventActivity>([]);
 
     useEffect(() => {
@@ -35,8 +35,8 @@ const News: React.FC<Props> = ({event, onRemoveClick}) => {
             setSharesQuantity(response.sharesQuantity);
         });
 
-        fetchPreMktVolume(model.ticker).then(response => {
-            setPreMktVolume(response);
+        fetchVolume(model.ticker).then(response => {
+            setVolume(response);
         });
 
         fetchPrice(model.ticker).then(response => {
@@ -53,7 +53,7 @@ const News: React.FC<Props> = ({event, onRemoveClick}) => {
             <Header>
                 <NewsTime value={model.time}/>
                 <NewsTicker ticker={model.ticker} name={name} capitalization={capitalization}/>
-                <Info sharesQuantity={sharesQuantity} basePrice={basePrice} preMktVolume={preMktVolume}/>
+                <Info sharesQuantity={sharesQuantity} basePrice={basePrice} volume={volume}/>
             </Header>
 
             <PriceWrapper>

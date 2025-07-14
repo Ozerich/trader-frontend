@@ -5,15 +5,15 @@ import {formatNumber, formatPrice} from "../../../formatter.ts";
 type Props = {
     basePrice?: number;
     sharesQuantity?: number;
-    preMktVolume?: number;
+    volume?: number;
 }
 
-const Info: React.FC<Props> = ({basePrice, sharesQuantity, preMktVolume}) => {
+const Info: React.FC<Props> = ({basePrice, sharesQuantity, volume}) => {
     return (
         <Component>
             <Param><ParamLabel>Base Price:</ParamLabel> <ParamValue>{formatPrice(basePrice)}</ParamValue></Param>
             <Param><ParamLabel>Shares Quantity:</ParamLabel> <ParamValue>{formatNumber(sharesQuantity)}</ParamValue></Param>
-            <Param><ParamLabel>Pre-Mkt Vol:</ParamLabel> <ParamValue>{formatNumber(preMktVolume)}</ParamValue></Param>
+            <Param><ParamLabel>Volume:</ParamLabel> <ParamValue>{formatNumber(volume)}</ParamValue></Param>
         </Component>
     );
 }
