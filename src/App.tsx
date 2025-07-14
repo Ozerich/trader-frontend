@@ -6,6 +6,7 @@ import type {NewsEvent} from "./types.ts";
 import {CATEGORIES} from "./categories.ts";
 import Category from "./containers/Category.tsx";
 import {useEventsContext} from "./contexts/events.context.tsx";
+import Errors from "./containers/Errors";
 
 const audio = new Audio('/news-sound.mp3');
 
@@ -27,11 +28,16 @@ function App() {
         }
     }, []);
 
-    return <Scene>
-        {CATEGORIES.map(category => (
-            <Category key={category.id} id={category.id} name={category.label}/>
-        ))}
-    </Scene>;
+    return (
+        <>
+            <Errors/>
+            <Scene>
+                {CATEGORIES.map(category => (
+                    <Category key={category.id} id={category.id} name={category.label}/>
+                ))}
+            </Scene>
+        </>
+    );
 }
 
 export default App
