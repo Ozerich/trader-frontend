@@ -30,6 +30,8 @@ export default PriceHistory;
 
 const Row = styled.div`
     display: flex;
+    justify-content: flex-end;
+    padding-right: 20px;
 `;
 
 const PricesRow = styled.div`
