@@ -61,10 +61,11 @@ function App() {
 export default App
 
 const Scene = styled.div`
-    display: flex;
-    justify-content: space-between;
+    display: grid;
     padding: 10px;
-    min-height: calc(100vh - 40px);
+    min-height: calc(-40px + 100vh);
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 1fr;
 `;
 
 const List = styled.div`
@@ -75,15 +76,11 @@ const List = styled.div`
 `;
 
 const Column = styled.div`
-    flex: 1;
-    border-right: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    border-right: 1px solid rgb(238, 238, 238);
     padding: 10px;
-    width: 25%;
-    min-width: 25%;
-
-    &:last-child {
-        border-right: 0 none;
-    }
 `;
 
 const Title = styled.span`
