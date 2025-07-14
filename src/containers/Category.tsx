@@ -37,7 +37,7 @@ const Column = styled.div`
     display: flex;
     flex-direction: column;
     border-right: 1px solid rgb(238, 238, 238);
-    min-width: 600px;
+    min-width: 650px;
 `;
 
 const Title = styled.span`

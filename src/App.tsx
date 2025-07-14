@@ -38,10 +38,11 @@ export default App
 
 const Scene = styled.div`
     display: grid;
+    overflow-y: hidden;
     min-height: calc(-40px + 100vh);
     grid-template-columns: repeat(${CATEGORIES.length}, 1fr);
     grid-template-rows: 1fr;
-    justify-content: center;
+    justify-content: flex-start;
     max-height: 100vh;
     height: 100vh;
 `;

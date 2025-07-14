@@ -17,16 +17,21 @@ const PriceHistory: React.FC<Props> = ({data}) => {
     return (
         <Row>
             <PricesRow>
-                {prices.map((item, index) => <Item>
-                        <Price>{formatPrice(item)}</Price>
-                        {index < prices.length - 1 && (
-                            <Splitter>
-                                <Time>{data[index].time}</Time>
-                                <i>→</i>
-                                <Volume>{formatNumber(data[index].volume)}</Volume>
-                            </Splitter>
-                        )}
-                    </Item>
+                {prices.map((item, index) => {
+                        const previousPrice = index > 0 ? prices[index - 1] : 0;
+                        const direction = index > 0 ? (item > previousPrice ? 'up' : (item < previousPrice ? 'down' : undefined)) : undefined;
+
+                        return <Item>
+                            <Price $direction={direction}>{formatPrice(item)}</Price>
+                            {index < prices.length - 1 && (
+                                <Splitter>
+                                    <Time>{data[index].time}</Time>
+                                    <i>→</i>
+                                    <Volume>{formatNumber(data[index].volume)}</Volume>
+                                </Splitter>
+                            )}
+                        </Item>
+                    }
                 )}
             </PricesRow>
         </Row>
@@ -44,7 +49,7 @@ const Row = styled.div`
 const PricesRow = styled.div`
     display: flex;
     gap: 5px;
-    font-size: 12px;
+    font-size: 13px;
 `;
 
 const Item = styled.div`
@@ -52,7 +57,10 @@ const Item = styled.div`
     gap: 5px;
 `;
 
-const Price = styled.span``;
+const Price = styled.span<{ $direction?: 'up' | 'down' }>`
+    color: ${props => props.$direction === 'up' ? 'green' : (props.$direction === 'down' ? 'red' : '')};
+    transform: translateY(4px);
+`;
 
 const Splitter = styled.div`
     display: flex;
@@ -71,11 +79,13 @@ const Splitter = styled.div`
 
 const Time = styled.span`
     text-align: center;
-    font-size: 80%;
+    font-size: 90%;
     opacity: .5;
 `;
+
 const Volume = styled.span`
     text-align: center;
-    font-size: 80%;
+    font-size: 90%;
     opacity: .5;
+    white-space: nowrap;
 `;
