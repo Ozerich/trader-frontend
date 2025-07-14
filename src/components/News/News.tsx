@@ -29,21 +29,19 @@ const News: React.FC<Props> = ({model, onRemoveClick}) => {
         return () => clearInterval(intervalId);
     }, []);
 
-    const isExpired = secondsDiff > 30;
-
     return (
-        <Component $expired={isExpired}>
+        <Component>
             <Header>
-                <NewsTime value={model.time} seconds={secondsDiff} isExpired={isExpired}/>
+                <NewsTime value={model.time} seconds={secondsDiff}/>
                 <NewsTicker value={model.ticker}/>
                 <PriceContainer>
-                    <PriceHistory data={model.activity}/>
                     <Price ticker={model.ticker}
                            defaultAsk={model.price.ask}
                            defaultBid={model.price.bid}
                            basePrice={model.basePrice}
                     />
                 </PriceContainer>
+                <PriceHistory data={model.activity}/>
             </Header>
 
             <Content>
@@ -83,10 +81,10 @@ const News: React.FC<Props> = ({model, onRemoveClick}) => {
 export default News;
 
 
-const Component = styled.div<{ $expired: boolean }>`
+const Component = styled.div`
     border: 1px solid #eee;
     padding: 5px;
-    background: ${props => props.$expired ? '#fff3f3' : '#d3fbd3'};
+    background: #eee;
 `;
 
 
