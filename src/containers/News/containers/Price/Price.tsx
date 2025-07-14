@@ -15,18 +15,16 @@ type PriceUpdateMessage = {
 }
 
 const Price: React.FC<Props> = ({ticker, basePrice, defaultAsk, defaultBid}) => {
-    const [ask, setAsk] = useState<number | undefined>(defaultAsk);
-    const [bid, setBid] = useState<number | undefined>(defaultBid);
+    const [ask, setAsk] = useState<number | undefined>();
+    const [bid, setBid] = useState<number | undefined>();
 
     const priceUpdate = (data: PriceUpdateMessage) => {
-        console.log('priceUpdate', ticker, data);
         setAsk(data.a);
         setBid(data.b);
     }
 
     useEffect(() => {
         socket.emit('subscribe', ticker);
-
         socket.on("price_update:" + ticker, priceUpdate);
 
         return () => {
@@ -34,6 +32,17 @@ const Price: React.FC<Props> = ({ticker, basePrice, defaultAsk, defaultBid}) => 
             socket.emit("unsubscribe", ticker);
         };
     }, [ticker]);
+
+    useEffect(() => {
+        if (!ask) {
+            setAsk(defaultAsk);
+        }
+        if (!bid) {
+            setBid(defaultBid);
+        }
+    }, [defaultAsk, defaultBid]);
+
+    console.log('Price Render', ask, bid);
 
     if (!ask || !bid) {
         return null;
