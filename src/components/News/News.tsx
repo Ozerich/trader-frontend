@@ -41,8 +41,9 @@ const News: React.FC<Props> = ({model, onRemoveClick}) => {
                            basePrice={model.basePrice}
                     />
                 </PriceContainer>
-                <PriceHistory data={model.activity}/>
             </Header>
+
+            <PriceHistory data={model.activity}/>
 
             <Content>
                 <Title>{model.title.ru}</Title>
