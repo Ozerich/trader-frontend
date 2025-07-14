@@ -43,7 +43,6 @@ function App() {
         }
     }
 
-
     return <Scene>
         {CATEGORIES.map(category => (
             <Column>
