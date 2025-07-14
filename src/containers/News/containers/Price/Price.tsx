@@ -8,7 +8,7 @@ type Props = {
     defaultBid?: number;
 }
 
-const Price: React.FC<Props> = ({ticker, basePrice, defaultAsk, defaultBid}) => {
+const Price: React.FC<Props> = ({basePrice, defaultAsk, defaultBid}) => {
 
     const ask = defaultAsk;
     const bid = defaultBid;
