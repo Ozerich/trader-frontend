@@ -38,6 +38,11 @@ const Column = styled.div`
     flex-direction: column;
     border-right: 1px solid rgb(238, 238, 238);
     min-width: 650px;
+
+    @media (max-height: 900px) {
+        overflow-y: hidden;
+        min-width: 0;
+    }
 `;
 
 const Title = styled.span`
