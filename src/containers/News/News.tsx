@@ -9,6 +9,7 @@ import Price from "./containers/Price/Price.tsx";
 import PriceHistory from "./components/PriceHistory.tsx";
 import {fetchPrice, fetchVolume, tickerInfo} from "../../services/backend.ts";
 import type {NewsEventActivity} from "../../types.ts";
+import {diffTimeInSeconds} from "./components/NewsTime/NewsTime.utils.ts";
 
 type Props = {
     event: ContextEvent,
@@ -28,6 +29,8 @@ const News: React.FC<Props> = ({event, onRemoveClick}) => {
     const [volume, setVolume] = useState<number | undefined>();
     const [history, setHistory] = useState<NewsEventActivity>([]);
 
+    const [buttonsHidden, setButtonsHidden] = useState<boolean>(true);
+
     useEffect(() => {
         tickerInfo(model.ticker).then(response => {
             setCapitalization(response.marketCap);
@@ -46,6 +49,18 @@ const News: React.FC<Props> = ({event, onRemoveClick}) => {
             setHistory(response.activity);
         });
     }, []);
+
+    useEffect(() => {
+        const diffInSeconds = diffTimeInSeconds(model.time);
+        if (diffInSeconds < 30) {
+            setButtonsHidden(false);
+
+            setTimeout(() => {
+                setButtonsHidden(true);
+            }, (30 - diffInSeconds) * 1000);
+        }
+    }, [model.time]);
+
 
     const maxPriceToBuy = basePrice ? Math.round(basePrice * 1.3 * 100) / 100 : null;
 
@@ -71,7 +86,7 @@ const News: React.FC<Props> = ({event, onRemoveClick}) => {
 
             <Bottom>
                 <Actions>
-                    {window.location.search?.includes('saxo') && maxPriceToBuy ? <>
+                    {window.location.search?.includes('saxo') && maxPriceToBuy && !buttonsHidden ? <>
                         <SaxoAction ticker={model.ticker} total={100} maxPrice={maxPriceToBuy}/>
                         <SaxoAction ticker={model.ticker} total={500} maxPrice={maxPriceToBuy}/>
                         <SaxoAction ticker={model.ticker} total={1000} maxPrice={maxPriceToBuy}/>
