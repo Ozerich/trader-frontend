@@ -15,7 +15,7 @@ const Configurations: Record<Environment, Configuration> = {
         OverPriceLimitCoefficient: 1.3,
     },
     Prod: {
-        EventActualTime: 60,
+        EventActualTime: 70,
         EventLifeTime: 60,
         OverPriceLimitCoefficient: 1.3,
     }
