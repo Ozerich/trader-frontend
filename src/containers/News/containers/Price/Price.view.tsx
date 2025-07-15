@@ -10,17 +10,17 @@ type Props = {
 const calculatePercent = (ask: number, basePrice: number): number => {
     const delta = Math.abs(ask - basePrice);
 
-    const percent = delta / ask * 100;
+    const percent = delta / basePrice * 100;
     const percentRounded = Math.round(percent * 100) / 100;
 
-    return percentRounded < 0 ? -percentRounded : percentRounded;
+    return ask < basePrice ? -percentRounded : percentRounded;
 }
 
 const PriceView: React.FC<Props> = ({ask, bid, basePrice}) => {
     const percent = basePrice && ask ? calculatePercent(ask, basePrice) : 0;
 
     return (
-        <Component>
+        <Component $color={basePrice ? (basePrice > ask ? 'red' : (basePrice < ask ? 'green' : '')) : ''}>
             {bid && ask && <span>{bid}..{ask}</span>}
             {percent !== 0 ? <Percent>{percent > 0 ? '+' : ''}{percent}%</Percent> : null}
         </Component>
@@ -29,10 +29,10 @@ const PriceView: React.FC<Props> = ({ask, bid, basePrice}) => {
 
 export default PriceView;
 
-const Component = styled.div`
+const Component = styled.div<{ $color: string }>`
     font-size: 16px;
     font-weight: bold;
-    color: green;
+    color: ${props => props.$color};
     display: flex;
     align-items: center;
 `;
