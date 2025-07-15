@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from "styled-components";
+import {formatPrice} from "../../../../formatter.ts";
 
 type Props = {
     ask: number;
@@ -21,7 +22,7 @@ const PriceView: React.FC<Props> = ({ask, bid, basePrice}) => {
 
     return (
         <Component $color={basePrice ? (basePrice > ask ? 'red' : (basePrice < ask ? 'green' : '')) : ''}>
-            {bid && ask && <span>{bid}..{ask}</span>}
+            {bid && ask && <span>{formatPrice(bid)} - {formatPrice(ask)}</span>}
             {percent !== 0 ? <Percent>{percent > 0 ? '+' : ''}{percent}%</Percent> : null}
         </Component>
     );
@@ -38,7 +39,7 @@ const Component = styled.div<{ $color: string }>`
 `;
 
 const Percent = styled.span`
-    font-size: 120%;
+    font-size: 100%;
     display: block;
-    margin-left: 5px;
+    margin-left: 10px;
 `;

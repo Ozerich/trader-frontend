@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import PriceView from "./Price.view.tsx";
 import socket from "../../../../socket.ts";
+import styled from "styled-components";
 
 type Props = {
     ticker: string;
@@ -42,15 +43,20 @@ const Price: React.FC<Props> = ({ticker, basePrice, defaultAsk, defaultBid}) => 
         }
     }, [defaultAsk, defaultBid]);
 
-    console.log('Price Render', ask, bid);
 
     if (!ask || !bid) {
-        return null;
+        return <PriceWrapper/>;
     }
 
     return (
-        <PriceView ask={ask} bid={bid} basePrice={basePrice}/>
+        <PriceWrapper>
+            <PriceView ask={ask} bid={bid} basePrice={basePrice}/>
+        </PriceWrapper>
     );
 }
 
 export default Price;
+
+const PriceWrapper = styled.div`
+    min-height: 23px;
+`;

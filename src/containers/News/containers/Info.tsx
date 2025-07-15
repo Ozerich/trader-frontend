@@ -4,16 +4,19 @@ import {formatNumber, formatPrice} from "../../../formatter.ts";
 
 type Props = {
     basePrice?: number;
-    sharesQuantity?: number;
     volume?: number;
+    capitalization?: number;
 }
 
-const Info: React.FC<Props> = ({basePrice, sharesQuantity, volume}) => {
+const Info: React.FC<Props> = ({basePrice, volume, capitalization}) => {
     return (
         <Component>
-            <Param><ParamLabel>Base Price:</ParamLabel> <ParamValue>{formatPrice(basePrice)}</ParamValue></Param>
-            <Param><ParamLabel>Shares Quantity:</ParamLabel> <ParamValue>{formatNumber(sharesQuantity)}</ParamValue></Param>
-            <Param><ParamLabel>Volume:</ParamLabel> <ParamValue>{formatNumber(volume)}</ParamValue></Param>
+            <Param><ParamLabel>Base:</ParamLabel> <ParamValue>{formatPrice(basePrice)}</ParamValue></Param>
+            <Param>
+                <ParamLabel>Volume:</ParamLabel>
+                <ParamValue>{formatNumber(volume)}</ParamValue>
+            </Param>
+            <Param><ParamLabel>Cap:</ParamLabel> <ParamValue>{formatNumber(capitalization)}</ParamValue></Param>
         </Component>
     );
 }
@@ -21,23 +24,21 @@ const Info: React.FC<Props> = ({basePrice, sharesQuantity, volume}) => {
 export default Info;
 
 const Component = styled.div`
-    margin-left: auto;
+    display: flex;
+    gap: 20px;
 `;
 
 const Param = styled.div`
-    display: flex;
     font-size: 12px;
+    display: flex;
+    flex-direction: column;
 `;
 
 const ParamValue = styled.span`
-    display: flex;
     font-weight: bold;
-    margin-left: 5px;
-    width: 60px;
+    text-align: left;
 `;
 
 const ParamLabel = styled.span`
     display: block;
-    width: 100px;
-    text-align: right;
 `;

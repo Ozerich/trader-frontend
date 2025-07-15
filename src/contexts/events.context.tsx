@@ -30,13 +30,14 @@ const EventsContextProvider: React.FC<Props> = ({children}) => {
     const addEvent = (event: NewsEvent) => {
 
         setEvents(events => {
-            const isExisted = events.find(item => item.ticker === event.ticker);
+            /*const isExisted = events.find(item => item.ticker === event.ticker);
 
             if (isExisted) {
                 return events;
-            }
+            }*/
 
             playMusic();
+
             return [...events, event]
         });
     }

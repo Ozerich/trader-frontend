@@ -25,7 +25,6 @@ const NewsTime: React.FC<Props> = ({value}) => {
     return (
         <Component $isExpired={secondsDiff > 30}>
             <Value>{value}</Value>
-            <Timer>{secondsDiff + ' sec. ago'}</Timer>
         </Component>
     )
 }

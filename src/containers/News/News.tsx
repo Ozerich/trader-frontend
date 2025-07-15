@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import styled, {css} from "styled-components";
-import NewsTime from "./components/NewsTime/NewsTime.tsx";
 import NewsTicker from "./containers/NewsTicker.tsx";
 import Info from "./containers/Info.tsx";
 import Price from "./containers/Price/Price.tsx";
@@ -9,6 +8,8 @@ import {fetchPrice, fetchVolume, tickerInfo} from "../../services/backend.ts";
 import type {NewsEvent, NewsEventActivity} from "../../types.ts";
 import {diffTimeInSeconds} from "./components/NewsTime/NewsTime.utils.ts";
 import NewsSaxoActions from "./containers/NewsSaxoActions.tsx";
+import {Config} from "../../config.ts";
+import Timer from "./containers/Timer.tsx";
 
 type Props = {
     model: NewsEvent,
@@ -16,23 +17,19 @@ type Props = {
 }
 
 const News: React.FC<Props> = ({model, onRemoveClick}) => {
-
     const [capitalization, setCapitalization] = useState<number | undefined>();
     const [name, setName] = useState<string | undefined>();
-    const [sharesQuantity, setSharesQuantity] = useState<number | undefined>();
     const [basePrice, setBasePrice] = useState<number | undefined>();
     const [askPrice, setAskPrice] = useState<number | undefined>();
     const [bidPrice, setBidPrice] = useState<number | undefined>();
     const [volume, setVolume] = useState<number | undefined>();
     const [history, setHistory] = useState<NewsEventActivity>([]);
-
-    const [isExpired, setIsExpired] = useState<boolean>(true);
+    const [isExpired, setIsExpired] = useState<boolean>(false);
 
     useEffect(() => {
         tickerInfo(model.ticker).then(response => {
             setCapitalization(response.marketCap);
             setName(response.name);
-            setSharesQuantity(response.sharesQuantity);
         });
 
         fetchVolume(model.ticker).then(response => {
@@ -48,33 +45,37 @@ const News: React.FC<Props> = ({model, onRemoveClick}) => {
     }, []);
 
     useEffect(() => {
+        if (Config.EventActualTime === -1) return;
+
         const diffInSeconds = diffTimeInSeconds(model.time);
 
-        if (diffInSeconds < 60) {
+        if (diffInSeconds < Config.EventActualTime) {
             setIsExpired(false);
 
             setTimeout(() => {
                 setIsExpired(true);
-            }, (60 - diffInSeconds) * 1000);
+            }, (Config.EventActualTime - diffInSeconds) * 1000);
         }
 
-        if (diffInSeconds >= 120) {
-            onRemoveClick();
-        } else {
-            setTimeout(() => {
+        if (Config.EventLifeTime !== -1) {
+            if (diffInSeconds >= Config.EventLifeTime) {
                 onRemoveClick();
-            }, (120 - diffInSeconds) * 1000);
+            } else {
+                setTimeout(() => {
+                    onRemoveClick();
+                }, (Config.EventLifeTime - diffInSeconds) * 1000);
+            }
         }
     }, [model.time]);
 
-    const maxPriceToBuy = basePrice ? Math.round(basePrice * 1.3 * 100) / 100 : null;
+    const maxPriceToBuy = basePrice ? Math.round(basePrice * Config.OverPriceLimitCoefficient * 100) / 100 : null;
 
     const getError = (): string | null => {
         if (isExpired) {
             return 'Expired'
         }
 
-        if (askPrice && basePrice && askPrice >= basePrice * 1.3) {
+        if (askPrice && basePrice && askPrice >= basePrice * Config.OverPriceLimitCoefficient) {
             return 'ASK Price is higher than 30%';
         }
 
@@ -85,15 +86,18 @@ const News: React.FC<Props> = ({model, onRemoveClick}) => {
 
     return (
         <Component $withError={!!error}>
+            <Number>{model.number}</Number>
 
             <Header>
-                <NewsTime value={model.time}/>
-                <NewsTicker ticker={model.ticker} name={name} capitalization={capitalization}/>
-                <Info sharesQuantity={sharesQuantity} basePrice={basePrice} volume={volume}/>
+                <Timer time={model.time}/>
+                <NewsTicker ticker={model.ticker} name={name}/>
             </Header>
 
             <PriceWrapper>
-                <Price ticker={model.ticker} basePrice={basePrice} defaultAsk={askPrice} defaultBid={bidPrice}/>
+                <Left>
+                    <Info basePrice={basePrice} volume={volume} capitalization={capitalization}/>
+                    <Price ticker={model.ticker} basePrice={basePrice} defaultAsk={askPrice} defaultBid={bidPrice}/>
+                </Left>
                 <PriceHistory data={history}/>
             </PriceWrapper>
 
@@ -121,6 +125,22 @@ const News: React.FC<Props> = ({model, onRemoveClick}) => {
 
 export default News;
 
+const Left = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+`;
+
+const Number = styled.span`
+    position: absolute;
+    background: #ccc;
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    right: 0;
+    top: 0;
+`;
+
 const BottomLeft = styled.div`
 
 `;
@@ -133,6 +153,7 @@ const Component = styled.div<{ $withError: boolean }>`
     border: 2px solid ${props => props.$withError ? 'red' : 'green'};
     background: #eee;
     overflow: hidden;
+    position: relative;
 
     ${props => props.$withError && css`
         opacity: .5;
@@ -146,14 +167,14 @@ const PriceWrapper = styled.div`
     justify-content: space-between;
     border-bottom: 1px solid #ddd;
     width: 100%;
-    height: 30px;
 `;
 
 const Header = styled.div`
     display: flex;
-    gap: 30px;
+    gap: 15px;
     border-bottom: 1px dashed #ddd;
-    padding: 10px;
+    padding: 5px 10px;
+    align-items: center;
 `;
 
 const Content = styled.div`

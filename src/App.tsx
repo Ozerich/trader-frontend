@@ -8,6 +8,7 @@ import Category from "./containers/Category.tsx";
 import {useEventsContext} from "./contexts/events.context.tsx";
 import Errors from "./containers/Errors";
 import {diffTimeInSeconds} from "./containers/News/components/NewsTime/NewsTime.utils.ts";
+import {Config} from "./config.ts";
 
 
 function App() {
@@ -17,7 +18,7 @@ function App() {
         socket.on("new_event", (data: NewsEvent) => {
             console.log('Socket IN - "new_event"', data);
 
-            if (diffTimeInSeconds(data.time) >= 120) {
+            if (Config.EventLifeTime !== -1 && diffTimeInSeconds(data.time) >= Config.EventLifeTime) {
                 return;
             }
 

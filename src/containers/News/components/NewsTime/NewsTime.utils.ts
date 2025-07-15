@@ -22,7 +22,7 @@ function getNYTime(): Date {
 export function diffTimeInSeconds(inputTimeStr: string): number {
     const nyNow = getNYTime();
 
-    const { hours, minutes, seconds } = parseTime12to24(inputTimeStr);
+    const {hours, minutes, seconds} = parseTime12to24(inputTimeStr);
 
     const inputDate = new Date(nyNow);
     inputDate.setHours(hours, minutes, seconds, 0);
@@ -34,15 +34,14 @@ export function diffTimeInSeconds(inputTimeStr: string): number {
         diffMs = nyNow.getTime() - inputDate.getTime();
     }
 
-    const diffSeconds = Math.floor(diffMs / 1000);
-    return diffSeconds;
+    return Math.floor(diffMs / 1000);
 }
 
 
 export function diffTimeString(inputTimeStr: string): string {
     const nyNow = getNYTime();
 
-    const { hours, minutes, seconds } = parseTime12to24(inputTimeStr);
+    const {hours, minutes, seconds} = parseTime12to24(inputTimeStr);
 
     const inputDate = new Date(nyNow);
     inputDate.setHours(hours, minutes, seconds, 0);

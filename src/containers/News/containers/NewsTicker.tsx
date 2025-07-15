@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from "styled-components";
-import {formatNumber} from "../../../formatter.ts";
 
 
 const copyToClipboard = (text: string) => {
@@ -10,16 +9,13 @@ const copyToClipboard = (text: string) => {
 type Props = {
     ticker: string;
     name: string | undefined;
-    capitalization: number | undefined;
 }
 
-const NewsTicker: React.FC<Props> = ({ticker, name, capitalization}) => {
+const NewsTicker: React.FC<Props> = ({ticker, name}) => {
     return (
         <Component onClick={() => copyToClipboard(ticker)}>
             <Header>
                 <Ticker>{ticker}</Ticker>
-                {capitalization &&
-                    <Capitalization>{formatNumber(capitalization)}</Capitalization>}
             </Header>
             <FullName href={`https://finance.yahoo.com/quote/${ticker}/`} target="_blank">{name}</FullName>
         </Component>
@@ -29,7 +25,10 @@ const NewsTicker: React.FC<Props> = ({ticker, name, capitalization}) => {
 export default NewsTicker;
 
 const Component = styled.div`
-
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
 `;
 
 const Header = styled.div`
@@ -50,7 +49,7 @@ const FullName = styled.a`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 150px;
+    max-width: 300px;
     display: block;
     transition: 0.3s all ease;
     text-decoration: none;
@@ -58,9 +57,4 @@ const FullName = styled.a`
     &:hover {
         color: #333;
     }
-`;
-
-const Capitalization = styled.span`
-    display: block;
-    font-size: 12px;
 `;
