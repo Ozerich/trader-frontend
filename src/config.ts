@@ -1,9 +1,6 @@
-enum Environment {
-    Local = 'Local',
-    Prod = 'Prod'
-}
+type Environment = 'Local' | 'Prod'
 
-export const ENV = document.location.href.includes('localhost') ? Environment.Local : Environment.Prod;
+export const ENV = document.location.href.includes('localhost') ? 'Local' : 'Prod';
 
 type Configuration = {
     EventLifeTime: number;
@@ -12,12 +9,12 @@ type Configuration = {
 }
 
 const Configurations: Record<Environment, Configuration> = {
-    [Environment.Local]: {
+    Local: {
         EventActualTime: -1,
         EventLifeTime: -1,
         OverPriceLimitCoefficient: 1.3,
     },
-    [Environment.Prod]: {
+    Prod: {
         EventActualTime: 60,
         EventLifeTime: 120,
         OverPriceLimitCoefficient: 1.3,
