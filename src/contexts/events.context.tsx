@@ -28,21 +28,18 @@ const EventsContextProvider: React.FC<Props> = ({children}) => {
     const [events, setEvents] = useState<Array<NewsEvent>>([]);
 
     const addEvent = (event: NewsEvent) => {
-
-        setEvents(events => {
-            /*const isExisted = events.find(item => item.ticker === event.ticker);
-
-            if (isExisted) {
-                return events;
-            }*/
-
-            playMusic();
-
-            return [...events, event]
-        });
+        playMusic();
+        setEvents(events => [...events, event]);
     }
 
-    const removeEvent = (id: string) => setEvents(events.filter(item => item.id !== id));
+    const removeEvent = (id: string) => {
+        console.log('remove event', id);
+        setEvents(events => {
+            const newEvents = events.filter(item => item.id !== id);
+            console.log('newEvents', newEvents.length);
+            return newEvents;
+        });
+    }
 
     return (
         <EventsContext.Provider value={{events, addEvent, removeEvent}}>

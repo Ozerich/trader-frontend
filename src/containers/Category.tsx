@@ -31,7 +31,7 @@ const Category: React.FC<Props> = ({id, name, index}) => {
             <List>
                 {(eventsFiltered.map((item) => {
                     return <News model={item} key={item.id}
-                                 onRemoveClick={() => removeNews(item.id)}/>
+                                 onRemove={removeNews}/>
                 }))}
             </List>
         </Column>

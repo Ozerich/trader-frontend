@@ -19,6 +19,7 @@ function App() {
             console.log('Socket IN - "new_event"', data);
 
             if (Config.EventLifeTime !== -1 && diffTimeInSeconds(data.time) >= Config.EventLifeTime) {
+                console.log('Skip: ', diffTimeInSeconds(data.time) + ' >= ' + Config.EventLifeTime);
                 return;
             }
 

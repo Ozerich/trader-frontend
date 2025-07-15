@@ -13,10 +13,10 @@ import Timer from "./containers/Timer.tsx";
 
 type Props = {
     model: NewsEvent,
-    onRemoveClick: () => void;
+    onRemove: (id: string) => void;
 }
 
-const News: React.FC<Props> = ({model, onRemoveClick}) => {
+const News: React.FC<Props> = ({model, onRemove}) => {
     const [capitalization, setCapitalization] = useState<number | undefined>();
     const [name, setName] = useState<string | undefined>();
     const [basePrice, setBasePrice] = useState<number | undefined>();
@@ -47,26 +47,47 @@ const News: React.FC<Props> = ({model, onRemoveClick}) => {
     useEffect(() => {
         if (Config.EventActualTime === -1) return;
 
+        let expiredTimeout: number;
+
         const diffInSeconds = diffTimeInSeconds(model.time);
 
         if (diffInSeconds < Config.EventActualTime) {
             setIsExpired(false);
 
-            setTimeout(() => {
+            expiredTimeout = setTimeout(() => {
                 setIsExpired(true);
             }, (Config.EventActualTime - diffInSeconds) * 1000);
         }
 
-        if (Config.EventLifeTime !== -1) {
-            if (diffInSeconds >= Config.EventLifeTime) {
-                onRemoveClick();
-            } else {
-                setTimeout(() => {
-                    onRemoveClick();
-                }, (Config.EventLifeTime - diffInSeconds) * 1000);
+        return () => {
+            if (expiredTimeout) {
+                clearTimeout(expiredTimeout);
             }
         }
-    }, [model.time]);
+
+    }, [model]);
+
+    useEffect(() => {
+        if (Config.EventLifeTime === -1) return;
+
+        let lifeTimeTimout: number;
+
+        const diffInSeconds = diffTimeInSeconds(model.time);
+
+        if (diffInSeconds >= Config.EventLifeTime) {
+            onRemove(model.id);
+        } else {
+            lifeTimeTimout = setTimeout(() => {
+                onRemove(model.id);
+            }, (Config.EventLifeTime - diffInSeconds) * 1000);
+        }
+
+        return () => {
+            if (lifeTimeTimout) {
+                clearTimeout(lifeTimeTimout);
+            }
+        }
+    }, [model, onRemove]);
 
     const maxPriceToBuy = basePrice ? Math.round(basePrice * Config.OverPriceLimitCoefficient * 100) / 100 : null;
 
@@ -116,7 +137,9 @@ const News: React.FC<Props> = ({model, onRemoveClick}) => {
                     {error && <Error>{error}</Error>}
                 </BottomLeft>
                 <BottomRight>
-                    <RemoveButton onClick={onRemoveClick}>Remove</RemoveButton>
+                    <RemoveButton onClick={() => {
+                        onRemove(model.id);
+                    }}>Remove</RemoveButton>
                 </BottomRight>
             </Bottom>
         </Component>
