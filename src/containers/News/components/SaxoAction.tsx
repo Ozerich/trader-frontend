@@ -5,25 +5,17 @@ import {saxoOrder} from "../../../services/saxo.ts";
 type Props = {
     ticker: string;
     total: number;
+    maxPrice: number;
 }
 
-const SaxoAction: React.FC<Props> = ({total, ticker}) => {
+const SaxoAction: React.FC<Props> = ({total, ticker, maxPrice}) => {
 
     const onClick = async () => {
         try {
-            const response = await saxoOrder(ticker, total);
+            const response = await saxoOrder(ticker, total, maxPrice);
             alert('Ордер выставлен: ' + response.orderId);
         } catch (e: any) {
-            if (e.message === 'Цена превышает агрессивный допуск') {
-                try {
-                    const response = await saxoOrder(ticker, total);
-                    alert('Ордер #2 выставлен: ' + response.orderId);
-                } catch (e: any) {
-                    alert('Ошибка второго ордера:' + e.message);
-                }
-            } else {
-                alert('Ошибка первого ордера:' + e.message);
-            }
+            alert('Ошибка первого ордера:' + e.message);
         }
     }
 

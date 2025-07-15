@@ -50,7 +50,7 @@ const FullName = styled.a`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 300px;
+    max-width: 150px;
     display: block;
     transition: 0.3s all ease;
     text-decoration: none;

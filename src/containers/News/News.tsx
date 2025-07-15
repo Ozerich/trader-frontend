@@ -47,6 +47,8 @@ const News: React.FC<Props> = ({event, onRemoveClick}) => {
         });
     }, []);
 
+    const maxPriceToBuy = basePrice ? Math.round(basePrice * 1.3 * 100) / 100 : null;
+
     return (
         <Component $isDuplicate={isDuplicate}>
 
@@ -69,11 +71,11 @@ const News: React.FC<Props> = ({event, onRemoveClick}) => {
 
             <Bottom>
                 <Actions>
-                    {window.location.search?.includes('saxo') ? <>
-                        <SaxoAction ticker={model.ticker} total={100}/>
-                        <SaxoAction ticker={model.ticker} total={500}/>
-                        <SaxoAction ticker={model.ticker} total={1000}/>
-                        <SaxoAction ticker={model.ticker} total={5000}/>
+                    {window.location.search?.includes('saxo') && maxPriceToBuy ? <>
+                        <SaxoAction ticker={model.ticker} total={100} maxPrice={maxPriceToBuy}/>
+                        <SaxoAction ticker={model.ticker} total={500} maxPrice={maxPriceToBuy}/>
+                        <SaxoAction ticker={model.ticker} total={1000} maxPrice={maxPriceToBuy}/>
+                        <SaxoAction ticker={model.ticker} total={5000} maxPrice={maxPriceToBuy}/>
                     </> : null}
                     <RemoveButton onClick={onRemoveClick}>Remove</RemoveButton>
                 </Actions>
