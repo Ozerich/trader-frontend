@@ -7,8 +7,8 @@ import {CATEGORIES} from "./categories.ts";
 import Category from "./containers/Category.tsx";
 import {useEventsContext} from "./contexts/events.context.tsx";
 import Errors from "./containers/Errors";
+import {diffTimeInSeconds} from "./containers/News/components/NewsTime/NewsTime.utils.ts";
 
-const audio = new Audio('/news-sound.mp3');
 
 function App() {
     const {addEvent} = useEventsContext();
@@ -17,8 +17,9 @@ function App() {
         socket.on("new_event", (data: NewsEvent) => {
             console.log('Socket IN - "new_event"', data);
 
-            audio.play().catch(() => {
-            })
+            if (diffTimeInSeconds(data.time) >= 120) {
+                return;
+            }
 
             addEvent(data);
         });

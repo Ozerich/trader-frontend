@@ -1,5 +1,6 @@
 import type {NewsEvent} from "../types.ts";
 import React, {useContext, useState} from "react";
+import {playMusic} from "../music.ts";
 
 export type ContextEvent = {
     isDuplicate: boolean;
@@ -7,7 +8,7 @@ export type ContextEvent = {
 }
 
 type EventsContextType = {
-    events: Array<ContextEvent>,
+    events: Array<NewsEvent>,
     addEvent: (item: NewsEvent) => void
     removeEvent: (id: string) => void
 };
@@ -24,23 +25,23 @@ type Props = {
     children: React.ReactNode
 }
 const EventsContextProvider: React.FC<Props> = ({children}) => {
-    const [events, setEvents] = useState<Array<ContextEvent>>([]);
+    const [events, setEvents] = useState<Array<NewsEvent>>([]);
 
     const addEvent = (event: NewsEvent) => {
 
         setEvents(events => {
-            const isExisted = events.find(item => item.model.ticker === event.ticker);
+            const isExisted = events.find(item => item.ticker === event.ticker);
 
-            const newContextEvent: ContextEvent = {
-                isDuplicate: !!isExisted,
-                model: event
-            };
+            if (isExisted) {
+                return events;
+            }
 
-            return [...events, newContextEvent]
+            playMusic();
+            return [...events, event]
         });
     }
 
-    const removeEvent = (id: string) => setEvents(events.filter(item => item.model.id !== id));
+    const removeEvent = (id: string) => setEvents(events.filter(item => item.id !== id));
 
     return (
         <EventsContext.Provider value={{events, addEvent, removeEvent}}>

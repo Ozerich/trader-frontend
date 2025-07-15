@@ -1,24 +1,21 @@
 import React, {useEffect, useState} from 'react';
 import styled, {css} from "styled-components";
-import SaxoAction from "./components/SaxoAction.tsx";
 import NewsTime from "./components/NewsTime/NewsTime.tsx";
 import NewsTicker from "./containers/NewsTicker.tsx";
-import type {ContextEvent} from "../../contexts/events.context.tsx";
 import Info from "./containers/Info.tsx";
 import Price from "./containers/Price/Price.tsx";
 import PriceHistory from "./components/PriceHistory.tsx";
 import {fetchPrice, fetchVolume, tickerInfo} from "../../services/backend.ts";
-import type {NewsEventActivity} from "../../types.ts";
+import type {NewsEvent, NewsEventActivity} from "../../types.ts";
 import {diffTimeInSeconds} from "./components/NewsTime/NewsTime.utils.ts";
+import NewsSaxoActions from "./containers/NewsSaxoActions.tsx";
 
 type Props = {
-    event: ContextEvent,
+    model: NewsEvent,
     onRemoveClick: () => void;
 }
 
-const News: React.FC<Props> = ({event, onRemoveClick}) => {
-
-    const {model, isDuplicate} = event;
+const News: React.FC<Props> = ({model, onRemoveClick}) => {
 
     const [capitalization, setCapitalization] = useState<number | undefined>();
     const [name, setName] = useState<string | undefined>();
@@ -29,7 +26,7 @@ const News: React.FC<Props> = ({event, onRemoveClick}) => {
     const [volume, setVolume] = useState<number | undefined>();
     const [history, setHistory] = useState<NewsEventActivity>([]);
 
-    const [buttonsHidden, setButtonsHidden] = useState<boolean>(true);
+    const [isExpired, setIsExpired] = useState<boolean>(true);
 
     useEffect(() => {
         tickerInfo(model.ticker).then(response => {
@@ -52,20 +49,42 @@ const News: React.FC<Props> = ({event, onRemoveClick}) => {
 
     useEffect(() => {
         const diffInSeconds = diffTimeInSeconds(model.time);
-        if (diffInSeconds < 30) {
-            setButtonsHidden(false);
+
+        if (diffInSeconds < 60) {
+            setIsExpired(false);
 
             setTimeout(() => {
-                setButtonsHidden(true);
-            }, (30 - diffInSeconds) * 1000);
+                setIsExpired(true);
+            }, (60 - diffInSeconds) * 1000);
+        }
+
+        if (diffInSeconds >= 120) {
+            onRemoveClick();
+        } else {
+            setTimeout(() => {
+                onRemoveClick();
+            }, (120 - diffInSeconds) * 1000);
         }
     }, [model.time]);
 
-
     const maxPriceToBuy = basePrice ? Math.round(basePrice * 1.3 * 100) / 100 : null;
 
+    const getError = (): string | null => {
+        if (isExpired) {
+            return 'Expired'
+        }
+
+        if (askPrice && basePrice && askPrice >= basePrice * 1.3) {
+            return 'ASK Price is higher than 30%';
+        }
+
+        return null;
+    }
+
+    const error = getError();
+
     return (
-        <Component $isDuplicate={isDuplicate}>
+        <Component $withError={!!error}>
 
             <Header>
                 <NewsTime value={model.time}/>
@@ -85,15 +104,16 @@ const News: React.FC<Props> = ({event, onRemoveClick}) => {
             </Content>
 
             <Bottom>
-                <Actions>
-                    {window.location.search?.includes('saxo') && maxPriceToBuy && !buttonsHidden ? <>
-                        <SaxoAction ticker={model.ticker} total={100} maxPrice={maxPriceToBuy}/>
-                        <SaxoAction ticker={model.ticker} total={500} maxPrice={maxPriceToBuy}/>
-                        <SaxoAction ticker={model.ticker} total={1000} maxPrice={maxPriceToBuy}/>
-                        <SaxoAction ticker={model.ticker} total={5000} maxPrice={maxPriceToBuy}/>
+                <BottomLeft>
+                    {window.location.search?.includes('saxo') && maxPriceToBuy && !error ? <>
+                        <NewsSaxoActions ticker={model.ticker} maxPrice={maxPriceToBuy}/>
                     </> : null}
+
+                    {error && <Error>{error}</Error>}
+                </BottomLeft>
+                <BottomRight>
                     <RemoveButton onClick={onRemoveClick}>Remove</RemoveButton>
-                </Actions>
+                </BottomRight>
             </Bottom>
         </Component>
     )
@@ -101,14 +121,21 @@ const News: React.FC<Props> = ({event, onRemoveClick}) => {
 
 export default News;
 
+const BottomLeft = styled.div`
 
-const Component = styled.div<{ $isDuplicate: boolean }>`
-    border: 1px solid #aaa;
+`;
+
+const BottomRight = styled.div`
+    margin-left: auto;
+`;
+
+const Component = styled.div<{ $withError: boolean }>`
+    border: 2px solid ${props => props.$withError ? 'red' : 'green'};
     background: #eee;
     overflow: hidden;
 
-    ${props => props.$isDuplicate && css`
-        opacity: .3;
+    ${props => props.$withError && css`
+        opacity: .5;
     `}
 `;
 
@@ -147,12 +174,6 @@ const Subtitle = styled.p`
     font-size: 10px;
 `
 
-const Actions = styled.div`
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    width: 100%;
-`;
 
 const Bottom = styled.div`
     display: flex;
@@ -179,4 +200,11 @@ const RemoveButton = styled.button`
         background: red;
         color: white;
     }
+`;
+
+const Error = styled.div`
+    background: red;
+    color: #fff;
+    padding: 5px 20px;
+    font-size: 12px;
 `;

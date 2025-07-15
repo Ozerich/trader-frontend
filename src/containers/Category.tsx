@@ -15,15 +15,15 @@ const Category: React.FC<Props> = ({id, name}) => {
         removeEvent(id);
     }
 
-    const eventsByCategory = events.filter(item => item.model.category === id);
+    const eventsByCategory = events.filter(item => item.category === id);
 
     return (
         <Column>
             <Title>{name}</Title>
             <List>
                 {(eventsByCategory.map((item) => {
-                    return <News event={item} key={item.model.id}
-                                 onRemoveClick={() => removeNews(item.model.id)}/>
+                    return <News model={item} key={item.id}
+                                 onRemoveClick={() => removeNews(item.id)}/>
                 }))}
             </List>
         </Column>
@@ -37,7 +37,7 @@ const Column = styled.div`
     display: flex;
     flex-direction: column;
     border-right: 1px solid rgb(238, 238, 238);
-    min-width: 650px;
+    min-width: 500px;
 
     @media (max-height: 900px) {
         overflow-y: hidden;

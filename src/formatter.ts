@@ -26,3 +26,11 @@ export const formatPrice = (value: number | undefined): string => {
 
     return value.toFixed(2);
 }
+
+export function isDifferenceLarge(a: number, b: number, maxDiff: number) {
+    const diff = Math.abs(a - b);
+    const avg = (a + b) / 2;
+    const percentDiff = (diff / avg) * 100;
+
+    return percentDiff > maxDiff;
+}
