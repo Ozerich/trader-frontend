@@ -13,8 +13,8 @@ type Configuration = {
 
 const Configurations: Record<Environment, Configuration> = {
     [Environment.Local]: {
-        EventActualTime: 60,
-        EventLifeTime: 120,
+        EventActualTime: -1,
+        EventLifeTime: -1,
         OverPriceLimitCoefficient: 1.3,
     },
     [Environment.Prod]: {

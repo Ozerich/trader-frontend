@@ -2,13 +2,15 @@ import React from 'react';
 import styled from "styled-components";
 import News from "./News";
 import {useEventsContext} from "../contexts/events.context.tsx";
+import {CATEGORIES} from "../categories.ts";
 
 type Props = {
     id: string,
-    name: string
+    name: string,
+    index?: number
 }
 
-const Category: React.FC<Props> = ({id, name}) => {
+const Category: React.FC<Props> = ({id, name, index}) => {
     const {removeEvent, events} = useEventsContext();
 
     const removeNews = (id: string) => {
@@ -17,11 +19,17 @@ const Category: React.FC<Props> = ({id, name}) => {
 
     const eventsByCategory = events.filter(item => item.category === id);
 
+    const categoriesCount = CATEGORIES.filter(item => item.id === id).length;
+
+    const eventsFiltered = index ? eventsByCategory.filter((_item, _index) => {
+        return _index % categoriesCount === (index - 1);
+    }) : eventsByCategory;
+
     return (
         <Column>
             <Title>{name}</Title>
             <List>
-                {(eventsByCategory.map((item) => {
+                {(eventsFiltered.map((item) => {
                     return <News model={item} key={item.id}
                                  onRemoveClick={() => removeNews(item.id)}/>
                 }))}

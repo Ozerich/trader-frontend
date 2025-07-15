@@ -30,12 +30,13 @@ function App() {
         }
     }, []);
 
+
     return (
         <>
             <Errors/>
             <Scene>
                 {CATEGORIES.map(category => (
-                    <Category key={category.id} id={category.id} name={category.label}/>
+                    <Category key={category.id} id={category.id} name={category.label} index={category.index}/>
                 ))}
             </Scene>
         </>
