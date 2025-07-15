@@ -44,7 +44,3 @@ const Component = styled.div<{ $isExpired: boolean }>`
 const Value = styled.span`
     font-size: 14px;
 `;
-
-const Timer = styled.span`
-    font-size: 10px;
-`;
