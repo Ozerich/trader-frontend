@@ -36,7 +36,7 @@ export function unsubscribeTicker(ticker: string, id: string) {
     subscriptions[ticker] = subscriptions[ticker].filter(item => item !== id);
 
     if (subscriptions[ticker].length === 0) {
-        socket.emit("unsubscribe", subscriptions[id]);
+        socket.emit("unsubscribe", ticker);
         console.log(`❌ Unsubscribe ${ticker}`);
 
         delete subscriptions[ticker];
