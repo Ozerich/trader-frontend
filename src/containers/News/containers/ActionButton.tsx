@@ -38,7 +38,7 @@ const Component = styled.button<{ $client: 'tiger' | 'saxo' }>`
     transition: 0.3s all ease;
 
     background: ${props => props.$client === 'tiger' ? 'rgb(255, 225, 0)' : 'rgb(64, 115, 236)'};
-    color: #fff;
+    color: ${props => props.$client === 'tiger' ? 'rgb(44, 46, 59)' : '#fff'};
     
     &:hover {
         opacity: .8;
