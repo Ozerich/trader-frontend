@@ -36,9 +36,9 @@ const Price: React.FC<Props> = ({ticker, basePrice, defaultAsk, defaultBid, live
     const priceUpdate = (data: PriceUpdateMessage) => {
         const previousAsk = previousAskRef.current;
 
-        if (newsContainerRef.current && defaultAsk && defaultAsk !== data.a) {
-            newsContainerRef.current.classList.toggle('news-card--up', data.a > defaultAsk);
-            newsContainerRef.current.classList.toggle('news-card--down', data.a < defaultAsk);
+        if (newsContainerRef.current && previousAsk && previousAsk !== data.a) {
+            newsContainerRef.current.classList.toggle('news-card--up', data.a > previousAsk);
+            newsContainerRef.current.classList.toggle('news-card--down', data.a < previousAsk);
         }
 
         previousAskRef.current = data.a;
