@@ -33,6 +33,7 @@ export default PriceView;
 const Component = styled.div<{ $color: string }>`
     font-size: 16px;
     font-weight: bold;
+    white-space: nowrap;
     color: ${props => props.$color};
     display: flex;
     align-items: center;
