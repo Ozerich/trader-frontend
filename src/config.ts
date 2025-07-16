@@ -6,18 +6,21 @@ type Configuration = {
     EventLifeTime: number;
     EventActualTime: number;
     OverPriceLimitCoefficient: number;
+    HighlightWords: string[];
 }
 
 const Configurations: Record<Environment, Configuration> = {
     Local: {
         EventActualTime: 60,
-        EventLifeTime: 60,
+        EventLifeTime: 180,
         OverPriceLimitCoefficient: 1.3,
+        HighlightWords: ['positive', 'patent'],
     },
     Prod: {
-        EventActualTime: 70,
-        EventLifeTime: 60,
+        EventActualTime: 60,
+        EventLifeTime: 180,
         OverPriceLimitCoefficient: 1.3,
+        HighlightWords: ['positive', 'patent'],
     }
 };
 

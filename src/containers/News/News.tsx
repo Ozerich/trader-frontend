@@ -10,6 +10,7 @@ import {diffTimeInSeconds} from "./components/NewsTime/NewsTime.utils.ts";
 import NewsSaxoActions from "./containers/NewsSaxoActions.tsx";
 import {Config} from "../../config.ts";
 import Timer from "./containers/Timer.tsx";
+import {highlightKeywords} from "../../formatter.ts";
 
 type Props = {
     model: NewsEvent,
@@ -123,9 +124,9 @@ const News: React.FC<Props> = ({model, onRemove}) => {
             </PriceWrapper>
 
             <Content>
-                <Title>{model.title.ru}</Title>
-                <Subtitle>{model.title.en}</Subtitle>
-                <Subtitle>{model.subtitle}</Subtitle>
+                <Title dangerouslySetInnerHTML={{__html: highlightKeywords(model.title.ru)}}/>
+                <Subtitle dangerouslySetInnerHTML={{__html: highlightKeywords(model.title.en)}}/>
+                <Subtitle dangerouslySetInnerHTML={{__html: highlightKeywords(model.subtitle)}}/>
             </Content>
 
             <Bottom>
@@ -133,7 +134,6 @@ const News: React.FC<Props> = ({model, onRemove}) => {
                     {window.location.search?.includes('saxo') && maxPriceToBuy && !error ? <>
                         <NewsSaxoActions ticker={model.ticker} maxPrice={maxPriceToBuy}/>
                     </> : null}
-
                     {error && <Error>{error}</Error>}
                 </BottomLeft>
                 <BottomRight>
@@ -209,6 +209,12 @@ const Content = styled.div`
 
 const Title = styled.p`
     margin-bottom: 5px;
+
+    mark {
+        font-weight: bold;
+        background: #63e668;
+        padding: 2px 2px;
+    }
 `;
 
 const Subtitle = styled.p`
@@ -216,6 +222,12 @@ const Subtitle = styled.p`
     margin-top: 5px;
     padding-top: 5px;
     font-size: 10px;
+
+    mark {
+        font-weight: bold;
+        background: #63e668;
+        padding: 2px 2px;
+    }
 `
 
 

@@ -1,4 +1,6 @@
-export const formatNumber = (value: number | undefined, prefix : string = ''): string => {
+import {Config} from "./config.ts";
+
+export const formatNumber = (value: number | undefined, prefix: string = ''): string => {
     if (value === undefined) {
         return '-'
     }
@@ -33,4 +35,10 @@ export function isDifferenceLarge(a: number, b: number, maxDiff: number) {
     const percentDiff = (diff / avg) * 100;
 
     return percentDiff > maxDiff;
+}
+
+export function highlightKeywords(text: string): string {
+    const regex = new RegExp(`\\b(${ Config.HighlightWords.join('|')})\\b`, 'gi');
+
+    return text.replace(regex, '<mark>$1</mark>');
 }
