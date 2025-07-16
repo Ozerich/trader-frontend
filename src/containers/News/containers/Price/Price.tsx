@@ -17,23 +17,25 @@ type PriceUpdateMessage = {
 
 const Price: React.FC<Props> = ({ticker, basePrice, defaultAsk, defaultBid}) => {
     const ref = useRef<HTMLDivElement>(null);
+    const newsContainerRef = useRef<HTMLDivElement>(null);
 
     const [ask, setAsk] = useState<number | undefined>();
     const [bid, setBid] = useState<number | undefined>();
 
     const previousAskRef = useRef<number | undefined>(undefined);
 
+    useEffect(() => {
+        if (ref.current) {
+            newsContainerRef.current = ref.current.closest('.news-card');
+        }
+    }, [ref]);
+
     const priceUpdate = (data: PriceUpdateMessage) => {
         const previousAsk = previousAskRef.current;
 
-        const direction = previousAsk ? (data.a > previousAsk ? 'up' : (data.a < previousAsk ? 'down' : '')) : '';
-
-        if (ref.current) {
-            const newsContainer = ref.current.closest('.news-card');
-            if (newsContainer) {
-                newsContainer.classList.toggle('news-card--up', direction === 'up');
-                newsContainer.classList.toggle('news-card--down', direction === 'down');
-            }
+        if (newsContainerRef.current && previousAsk && previousAsk !== data.a) {
+            newsContainerRef.current.classList.toggle('news-card--up', data.a > previousAsk);
+            newsContainerRef.current.classList.toggle('news-card--down', data.a < previousAsk);
         }
 
         previousAskRef.current = data.a;
