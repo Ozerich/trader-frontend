@@ -33,9 +33,17 @@ const News: React.FC<Props> = ({model, onRemove}) => {
             setName(response.name);
         });
 
-        fetchVolume(model.ticker).then(response => {
-            setVolume(response);
-        });
+        let counter = 0;
+
+        const volumeTimer = setInterval(() => {
+            fetchVolume(model.ticker).then(response => {
+                setVolume(() => response);
+            });
+
+            if (counter++ === 3) {
+                if (volumeTimer) clearInterval(volumeTimer);
+            }
+        }, 5000);
 
         fetchPrice(model.ticker).then(response => {
             setBasePrice(response.price.base);
@@ -43,6 +51,10 @@ const News: React.FC<Props> = ({model, onRemove}) => {
             setBidPrice(response.price.bid);
             setHistory(response.activity);
         });
+
+        return () => {
+            if (volumeTimer) clearInterval(volumeTimer);
+        }
     }, []);
 
     useEffect(() => {
