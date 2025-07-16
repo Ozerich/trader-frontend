@@ -33,10 +33,8 @@ const EventsContextProvider: React.FC<Props> = ({children}) => {
     }
 
     const removeEvent = (id: string) => {
-        console.log('remove event', id);
         setEvents(events => {
             const newEvents = events.filter(item => item.id !== id);
-            console.log('newEvents', newEvents.length);
             return newEvents;
         });
     }

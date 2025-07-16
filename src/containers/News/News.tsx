@@ -107,7 +107,7 @@ const News: React.FC<Props> = ({model, onRemove}) => {
     const error = getError();
 
     return (
-        <Component $withError={!!error}>
+        <Component $withError={!!error} $isExpired={isExpired} className="news-card">
             <Number>{model.number}</Number>
 
             <Header>
@@ -172,15 +172,23 @@ const BottomRight = styled.div`
     margin-left: auto;
 `;
 
-const Component = styled.div<{ $withError: boolean }>`
-    border: 2px solid ${props => props.$withError ? 'red' : 'green'};
+const Component = styled.div<{ $withError: boolean, $isExpired: boolean }>`
+    border: 2px solid ${props => props.$withError ? 'red' : '#aaa'};
     background: #eee;
     overflow: hidden;
     position: relative;
-
-    ${props => props.$withError && css`
+    
+    ${props => props.$isExpired && css`
+        background: #eee !important;
         opacity: .5;
     `}
+    &.news-card--up {
+        background: #cdf8cd;
+    }
+
+    &.news-card--down {
+        background: #f6c1c1;
+    }
 `;
 
 const PriceWrapper = styled.div`
