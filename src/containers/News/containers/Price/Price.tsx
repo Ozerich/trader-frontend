@@ -25,7 +25,7 @@ const Price: React.FC<Props> = ({ticker, basePrice, defaultAsk, defaultBid, live
     const [ask, setAsk] = useState<number | undefined>();
     const [bid, setBid] = useState<number | undefined>();
 
-    //const previousAskRef = useRef<number | undefined>(undefined);
+    const previousAskRef = useRef<number | undefined>(undefined);
 
     useEffect(() => {
         if (ref.current) {
@@ -34,14 +34,14 @@ const Price: React.FC<Props> = ({ticker, basePrice, defaultAsk, defaultBid, live
     }, [ref]);
 
     const priceUpdate = (data: PriceUpdateMessage) => {
-       // const previousAsk = previousAskRef.current;
+        const previousAsk = previousAskRef.current;
 
         if (newsContainerRef.current && defaultAsk && defaultAsk !== data.a) {
             newsContainerRef.current.classList.toggle('news-card--up', data.a > defaultAsk);
             newsContainerRef.current.classList.toggle('news-card--down', data.a < defaultAsk);
         }
 
-       // previousAskRef.current = data.a;
+        previousAskRef.current = data.a;
 
         setAsk(data.a);
         setBid(data.b);
