@@ -65,7 +65,6 @@ const News: React.FC<Props> = ({model, onRemove}) => {
                 clearTimeout(expiredTimeout);
             }
         }
-
     }, [model]);
 
     useEffect(() => {
@@ -118,7 +117,8 @@ const News: React.FC<Props> = ({model, onRemove}) => {
             <PriceWrapper>
                 <Left>
                     <Info basePrice={basePrice} volume={volume} capitalization={capitalization}/>
-                    <Price ticker={model.ticker} basePrice={basePrice} defaultAsk={askPrice} defaultBid={bidPrice}/>
+                    <Price ticker={model.ticker} basePrice={basePrice} defaultAsk={askPrice} defaultBid={bidPrice}
+                           liveUpdate={!isExpired}/>
                 </Left>
                 <PriceHistory data={history}/>
             </PriceWrapper>

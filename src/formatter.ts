@@ -38,6 +38,8 @@ export function isDifferenceLarge(a: number, b: number, maxDiff: number) {
 }
 
 export function highlightKeywords(text: string): string {
+    if (!text) return text;
+
     const regex = new RegExp(`\\b(${ Config.HighlightWords.join('|')})\\b`, 'gi');
 
     return text.replace(regex, '<mark>$1</mark>');

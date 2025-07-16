@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import PriceView from "./Price.view.tsx";
-import socket from "../../../../socket.ts";
+import socket, {subscribeTicker, unsubscribeTicker} from "../../../../socket.ts";
 import styled from "styled-components";
 
 type Props = {
@@ -8,6 +8,7 @@ type Props = {
     basePrice?: number;
     defaultAsk?: number;
     defaultBid?: number;
+    liveUpdate: boolean;
 }
 
 type PriceUpdateMessage = {
@@ -15,7 +16,9 @@ type PriceUpdateMessage = {
     b: number
 }
 
-const Price: React.FC<Props> = ({ticker, basePrice, defaultAsk, defaultBid}) => {
+const Price: React.FC<Props> = ({ticker, basePrice, defaultAsk, defaultBid, liveUpdate}) => {
+    const listenerId = useRef<string>('');
+
     const ref = useRef<HTMLDivElement>(null);
     const newsContainerRef = useRef<HTMLDivElement>(null);
 
@@ -45,14 +48,25 @@ const Price: React.FC<Props> = ({ticker, basePrice, defaultAsk, defaultBid}) => 
     }
 
     useEffect(() => {
-        socket.emit('subscribe', ticker);
-        socket.on("price_update:" + ticker, priceUpdate);
-
-        return () => {
+        if (liveUpdate) {
+            listenerId.current = subscribeTicker(ticker);
+            socket.on("price_update:" + ticker, priceUpdate);
+        } else {
+            if (listenerId.current) {
+                unsubscribeTicker(listenerId.current);
+            }
             socket.off('price_update:' + ticker, priceUpdate);
-            socket.emit("unsubscribe", ticker);
-        };
-    }, [ticker]);
+        }
+    }, [liveUpdate, ticker]);
+
+    useEffect(() => {
+        return () => {
+            if (listenerId.current) {
+                unsubscribeTicker(listenerId.current);
+            }
+            socket.off('price_update:' + ticker, priceUpdate);
+        }
+    }, []);
 
     useEffect(() => {
         if (!ask) {
