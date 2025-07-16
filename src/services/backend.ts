@@ -66,8 +66,8 @@ export async function fetchVolume(ticker: string): Promise<number> {
     return responseRaw.result;
 }
 
-export async function fetchSecondVolume(ticker: string, seconds: number): Promise<number> {
-    const response = await fetch(BACKEND_BASE_URL + '/tickers/' + ticker + '/second-volume?seconds=' + seconds, {
+export async function fetchLive(ticker: string, seconds: number): Promise<{volume: number, direction: 'up' | 'down' | 'neutral'}> {
+    const response = await fetch(BACKEND_BASE_URL + '/tickers/' + ticker + '/live?seconds=' + seconds, {
         method: "get",
         headers: {
             "Content-Type": "application/json"
@@ -80,5 +80,5 @@ export async function fetchSecondVolume(ticker: string, seconds: number): Promis
         throw new Error(responseRaw.error);
     }
 
-    return responseRaw.result;
+    return responseRaw;
 }

@@ -4,7 +4,7 @@ import NewsTicker from "./containers/NewsTicker.tsx";
 import Info from "./containers/Info.tsx";
 import Price from "./containers/Price/Price.tsx";
 import PriceHistory from "./components/PriceHistory.tsx";
-import {fetchPrice, fetchSecondVolume, fetchVolume, tickerInfo} from "../../services/backend.ts";
+import {fetchLive, fetchPrice, fetchVolume, tickerInfo} from "../../services/backend.ts";
 import type {NewsEvent, NewsEventActivity} from "../../types.ts";
 import {diffTimeInSeconds} from "./components/NewsTime/NewsTime.utils.ts";
 import NewsActions from "./containers/NewsActions.tsx";
@@ -24,7 +24,8 @@ const News: React.FC<Props> = ({model, onRemove}) => {
     const [askPrice, setAskPrice] = useState<number | undefined>();
     const [bidPrice, setBidPrice] = useState<number | undefined>();
     const [volume, setVolume] = useState<number | undefined>();
-    const [secondsVolume, setSecondsVolume] = useState<number | undefined>();
+    const [liveVolume, setLiveVolume] = useState<number | undefined>();
+    const [liveDirection, setLiveDirection] = useState<'up' | 'down' | 'neutral'>('neutral');
     const [history, setHistory] = useState<NewsEventActivity>([]);
     const [isExpired, setIsExpired] = useState<boolean>(false);
 
@@ -47,20 +48,33 @@ const News: React.FC<Props> = ({model, onRemove}) => {
     }, []);
 
     useEffect(() => {
-        let counter = 0;
-        const volumeTimer = setInterval(() => {
-            fetchSecondVolume(model.ticker, (counter + 1) * 5).then(response => {
-                setSecondsVolume(() => response);
-            });
-            if (counter++ === 6) {
+        if (!isExpired) {
+            let counter = 0;
+
+            let volumeTimer: number | null;
+
+            setTimeout(() => {
+                fetchLive(model.ticker, 3).then(response => {
+                    setLiveVolume(() => response.volume);
+                    setLiveDirection(() => response.direction);
+                });
+
+                volumeTimer = setInterval(() => {
+                    fetchLive(model.ticker, 3 + (counter + 1) * 5).then(response => {
+                        setLiveVolume(() => response.volume);
+                        setLiveDirection(() => response.direction);
+                    });
+
+                    counter++;
+                }, 5000);
+            }, 2000);
+
+
+            return () => {
                 if (volumeTimer) clearInterval(volumeTimer);
             }
-        }, 5000);
-
-        return () => {
-            if (volumeTimer) clearInterval(volumeTimer);
         }
-    }, []);
+    }, [isExpired]);
 
     useEffect(() => {
         if (Config.EventActualTime === -1) return;
@@ -123,7 +137,7 @@ const News: React.FC<Props> = ({model, onRemove}) => {
     const error = getError();
 
     return (
-        <Component $withError={!!error} $isExpired={isExpired} className="news-card">
+        <Component $withError={!!error} $isExpired={isExpired} $direction={liveDirection} className="news-card">
             <Number>{model.number}</Number>
 
             <Header>
@@ -133,7 +147,7 @@ const News: React.FC<Props> = ({model, onRemove}) => {
 
             <PriceWrapper>
                 <Left>
-                    <Info basePrice={basePrice} volume={volume} secondsVolume={secondsVolume}
+                    <Info basePrice={basePrice} volume={volume} liveVolume={liveVolume}
                           capitalization={capitalization}/>
                     <Price ticker={model.ticker} basePrice={basePrice} defaultAsk={askPrice} defaultBid={bidPrice}
                            liveUpdate={!isExpired}/>
@@ -190,7 +204,7 @@ const BottomRight = styled.div`
     margin-left: auto;
 `;
 
-const Component = styled.div<{ $withError: boolean, $isExpired: boolean }>`
+const Component = styled.div<{ $withError: boolean, $isExpired: boolean, $direction: 'up' | 'down' | 'neutral' }>`
     border: 2px solid ${props => props.$withError ? 'red' : '#aaa'};
     background: #eee;
     overflow: hidden;
@@ -200,13 +214,9 @@ const Component = styled.div<{ $withError: boolean, $isExpired: boolean }>`
         background: #eee !important;
         opacity: .5;
     `}
-    &.news-card--up {
-        background: #cdf8cd;
-    }
 
-    &.news-card--down {
-        background: #f6c1c1;
-    }
+    background: ${props => props.$direction === 'up' ? '#cdf8cd' : (props.$direction === 'down' ? '#f6c1c1' : 'eee')};
+
 `;
 
 const PriceWrapper = styled.div`
