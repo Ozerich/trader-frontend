@@ -53,7 +53,7 @@ const Price: React.FC<Props> = ({ticker, basePrice, defaultAsk, defaultBid, live
             socket.on("price_update:" + ticker, priceUpdate);
         } else {
             if (listenerId.current) {
-                unsubscribeTicker(listenerId.current);
+                unsubscribeTicker(ticker, listenerId.current);
             }
             socket.off('price_update:' + ticker, priceUpdate);
         }
@@ -62,7 +62,7 @@ const Price: React.FC<Props> = ({ticker, basePrice, defaultAsk, defaultBid, live
     useEffect(() => {
         return () => {
             if (listenerId.current) {
-                unsubscribeTicker(listenerId.current);
+                unsubscribeTicker(ticker, listenerId.current);
             }
             socket.off('price_update:' + ticker, priceUpdate);
         }

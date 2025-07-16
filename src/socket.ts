@@ -7,23 +7,40 @@ const socket = io(SOCKET_URI, {
     path: SOCKET_PATH
 });
 
-const subscriptions: Record<string, string> = {};
+const subscriptions: Record<string, Array<string>> = {};
 
 export function subscribeTicker(ticker: string): string {
-    socket.emit('subscribe', ticker);
+    if (!(ticker in subscriptions)) {
+        subscriptions[ticker] = [];
+
+        socket.emit('subscribe', ticker);
+        console.log(`📡 Subscribe to ${ticker}`);
+    }
 
     const id = Math.random().toString();
-    subscriptions[id] = ticker;
+    subscriptions[ticker].push(id);
+
     return id;
 }
 
-export function unsubscribeTicker(id: string) {
-    if (!(id in subscriptions)) {
+export function unsubscribeTicker(ticker: string, id: string) {
+    if (!(ticker in subscriptions)) {
         return;
     }
 
-    socket.emit("unsubscribe", subscriptions[id]);
-    delete subscriptions[id];
+    const found = subscriptions[ticker].includes(id);
+    if (!found) {
+        return;
+    }
+
+    subscriptions[ticker] = subscriptions[ticker].filter(item => item !== id);
+
+    if (subscriptions[ticker].length === 0) {
+        socket.emit("unsubscribe", subscriptions[id]);
+        console.log(`❌ Unsubscribe ${ticker}`);
+
+        delete subscriptions[ticker];
+    }
 
 }
 
