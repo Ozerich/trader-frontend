@@ -14,7 +14,7 @@ const NewsActions: React.FC<Props> = ({ticker, maxPrice}) => {
         return null;
     }
 
-    const amounts = client === 'tiger' ? [10, 50, 100] : [100, 500, 1000, 4000];
+    const amounts = client === 'tiger' ? [1000, 5000, 10000] : [1000, 2000, 4000];
 
     return (
         <Actions>
