@@ -5,16 +5,21 @@ import {formatNumber, formatPrice} from "../../../formatter.ts";
 type Props = {
     basePrice?: number;
     volume?: number;
+    secondsVolume?: number;
     capitalization?: number;
 }
 
-const Info: React.FC<Props> = ({basePrice, volume, capitalization}) => {
+const Info: React.FC<Props> = ({basePrice, volume, secondsVolume, capitalization}) => {
     return (
         <Component>
             <Param><ParamLabel>Base:</ParamLabel> <ParamValue>{formatPrice(basePrice)}</ParamValue></Param>
             <Param>
                 <ParamLabel>Volume:</ParamLabel>
                 <ParamValue>{formatNumber(volume)}</ParamValue>
+            </Param>
+            <Param>
+                <ParamLabel>Live:</ParamLabel>
+                <ParamValue>{formatNumber(secondsVolume)}</ParamValue>
             </Param>
             <Param><ParamLabel>Cap:</ParamLabel> <ParamValue>{formatNumber(capitalization)}</ParamValue></Param>
         </Component>

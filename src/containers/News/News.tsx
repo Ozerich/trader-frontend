@@ -4,7 +4,7 @@ import NewsTicker from "./containers/NewsTicker.tsx";
 import Info from "./containers/Info.tsx";
 import Price from "./containers/Price/Price.tsx";
 import PriceHistory from "./components/PriceHistory.tsx";
-import {fetchPrice, fetchVolume, tickerInfo} from "../../services/backend.ts";
+import {fetchPrice, fetchSecondVolume, fetchVolume, tickerInfo} from "../../services/backend.ts";
 import type {NewsEvent, NewsEventActivity} from "../../types.ts";
 import {diffTimeInSeconds} from "./components/NewsTime/NewsTime.utils.ts";
 import NewsActions from "./containers/NewsActions.tsx";
@@ -24,6 +24,7 @@ const News: React.FC<Props> = ({model, onRemove}) => {
     const [askPrice, setAskPrice] = useState<number | undefined>();
     const [bidPrice, setBidPrice] = useState<number | undefined>();
     const [volume, setVolume] = useState<number | undefined>();
+    const [secondsVolume, setSecondsVolume] = useState<number | undefined>();
     const [history, setHistory] = useState<NewsEventActivity>([]);
     const [isExpired, setIsExpired] = useState<boolean>(false);
 
@@ -33,17 +34,9 @@ const News: React.FC<Props> = ({model, onRemove}) => {
             setName(response.name);
         });
 
-        let counter = 0;
-
-        const volumeTimer = setInterval(() => {
-            fetchVolume(model.ticker).then(response => {
-                setVolume(() => response);
-            });
-
-            if (counter++ === 3) {
-                if (volumeTimer) clearInterval(volumeTimer);
-            }
-        }, 5000);
+        fetchVolume(model.ticker).then(response => {
+            setVolume(response);
+        });
 
         fetchPrice(model.ticker).then(response => {
             setBasePrice(response.price.base);
@@ -51,6 +44,18 @@ const News: React.FC<Props> = ({model, onRemove}) => {
             setBidPrice(response.price.bid);
             setHistory(response.activity);
         });
+    }, []);
+
+    useEffect(() => {
+        let counter = 0;
+        const volumeTimer = setInterval(() => {
+            fetchSecondVolume(model.ticker, (counter + 1) * 5).then(response => {
+                setSecondsVolume(() => response);
+            });
+            if (counter++ === 6) {
+                if (volumeTimer) clearInterval(volumeTimer);
+            }
+        }, 5000);
 
         return () => {
             if (volumeTimer) clearInterval(volumeTimer);
@@ -128,7 +133,8 @@ const News: React.FC<Props> = ({model, onRemove}) => {
 
             <PriceWrapper>
                 <Left>
-                    <Info basePrice={basePrice} volume={volume} capitalization={capitalization}/>
+                    <Info basePrice={basePrice} volume={volume} secondsVolume={secondsVolume}
+                          capitalization={capitalization}/>
                     <Price ticker={model.ticker} basePrice={basePrice} defaultAsk={askPrice} defaultBid={bidPrice}
                            liveUpdate={!isExpired}/>
                 </Left>

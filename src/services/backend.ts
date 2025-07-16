@@ -65,3 +65,20 @@ export async function fetchVolume(ticker: string): Promise<number> {
 
     return responseRaw.result;
 }
+
+export async function fetchSecondVolume(ticker: string, seconds: number): Promise<number> {
+    const response = await fetch(BACKEND_BASE_URL + '/tickers/' + ticker + '/second-volume?seconds=' + seconds, {
+        method: "get",
+        headers: {
+            "Content-Type": "application/json"
+        },
+    });
+
+    const responseRaw = await response.json();
+
+    if (response.status !== 200) {
+        throw new Error(responseRaw.error);
+    }
+
+    return responseRaw.result;
+}
