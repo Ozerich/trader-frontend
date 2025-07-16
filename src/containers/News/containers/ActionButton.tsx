@@ -1,18 +1,18 @@
 import React from 'react';
 import styled from "styled-components";
-import {saxoOrder} from "../../../services/saxo.ts";
+import {saxoOrder, tigerOrder} from "../../../services/saxo.ts";
 
 type Props = {
+    client: 'tiger' | 'saxo';
     ticker: string;
     total: number;
     maxPrice: number;
 }
 
-const SaxoAction: React.FC<Props> = ({total, ticker, maxPrice}) => {
-
+const ActionButton: React.FC<Props> = ({client, total, ticker, maxPrice}) => {
     const onClick = async () => {
         try {
-            const response = await saxoOrder(ticker, total, maxPrice);
+            const response = client === 'tiger' ? await tigerOrder(ticker, total, maxPrice) : await saxoOrder(ticker, total, maxPrice);
             alert('Ордер выставлен: ' + response.orderId);
         } catch (e: any) {
             alert('Ошибка первого ордера:' + e.message);
@@ -20,27 +20,27 @@ const SaxoAction: React.FC<Props> = ({total, ticker, maxPrice}) => {
     }
 
     return (
-        <Component onClick={onClick}>
+        <Component $client={client} onClick={onClick}>
             {total} $
         </Component>
     );
 }
 
-export default SaxoAction;
+export default ActionButton;
 
-const Component = styled.button`
+const Component = styled.button<{ $client: 'tiger' | 'saxo' }>`
     cursor: pointer;
     text-decoration: none;
-    border: 1px solid #aaa;
     padding: 5px 10px;
     background: #eee;
-    color: #000;
     font-weight: bold;
     font-size: 14px;
     transition: 0.3s all ease;
+
+    background: ${props => props.$client === 'tiger' ? 'rgb(255, 225, 0)' : 'rgb(64, 115, 236)'};
+    color: #fff;
     
-    &:hover{
-        background: #aaa;
-        color: #fff;
+    &:hover {
+        opacity: .8;
     }
 `;

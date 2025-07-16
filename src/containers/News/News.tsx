@@ -7,7 +7,7 @@ import PriceHistory from "./components/PriceHistory.tsx";
 import {fetchPrice, fetchVolume, tickerInfo} from "../../services/backend.ts";
 import type {NewsEvent, NewsEventActivity} from "../../types.ts";
 import {diffTimeInSeconds} from "./components/NewsTime/NewsTime.utils.ts";
-import NewsSaxoActions from "./containers/NewsSaxoActions.tsx";
+import NewsActions from "./containers/NewsActions.tsx";
 import {Config} from "../../config.ts";
 import Timer from "./containers/Timer.tsx";
 import {highlightKeywords} from "../../formatter.ts";
@@ -131,8 +131,8 @@ const News: React.FC<Props> = ({model, onRemove}) => {
 
             <Bottom>
                 <BottomLeft>
-                    {window.location.search?.includes('saxo') && maxPriceToBuy && !error ? <>
-                        <NewsSaxoActions ticker={model.ticker} maxPrice={maxPriceToBuy}/>
+                    {maxPriceToBuy && !error ? <>
+                        <NewsActions ticker={model.ticker} maxPrice={maxPriceToBuy}/>
                     </> : null}
                     {error && <Error>{error}</Error>}
                 </BottomLeft>
