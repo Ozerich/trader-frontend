@@ -177,7 +177,7 @@ const Component = styled.div<{ $withError: boolean, $isExpired: boolean }>`
     background: #eee;
     overflow: hidden;
     position: relative;
-    
+
     ${props => props.$isExpired && css`
         background: #eee !important;
         opacity: .5;

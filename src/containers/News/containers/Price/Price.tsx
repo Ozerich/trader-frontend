@@ -28,8 +28,6 @@ const Price: React.FC<Props> = ({ticker, basePrice, defaultAsk, defaultBid}) => 
 
         const direction = previousAsk ? (data.a > previousAsk ? 'up' : (data.a < previousAsk ? 'down' : '')) : '';
 
-        console.log(ticker, previousAsk, data.a, direction);
-
         if (ref.current) {
             const newsContainer = ref.current.closest('.news-card');
             if (newsContainer) {
