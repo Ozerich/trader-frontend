@@ -14,11 +14,17 @@ const NewsActions: React.FC<Props> = ({ticker, maxPrice}) => {
         return null;
     }
 
-    const amounts = client === 'tiger' ? [1000, 5000, 10000] : [1000, 2000, 4000];
+    let account = '';
+    if (client === 'tiger') {
+        account = window.location.search?.includes('account=vital') ? 'vital' : 'krivyan';
+    }
+
+    const amounts = client === 'tiger' ? (account === 'vital' ? [10, 25, 50, 75] : [1000, 5000, 10000]) : [1000, 2000, 4000];
 
     return (
         <Actions>
-            {amounts.map(amount => <ActionButton key={amount} client={client} ticker={ticker} total={amount}
+            {amounts.map(amount => <ActionButton key={amount} account={account} client={client} ticker={ticker}
+                                                 total={amount}
                                                  maxPrice={maxPrice}/>)}
         </Actions>
     );

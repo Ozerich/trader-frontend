@@ -18,14 +18,14 @@ export async function saxoOrder(ticker: string, total: number, maxPrice: number)
 
 }
 
-export async function tigerOrder(ticker: string, total: number, maxPrice: number) {
+export async function tigerOrder(account: string, ticker: string, total: number, maxPrice: number) {
 
     const response = await fetch("https://tiger-service.ozerich.com/order/" + ticker, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({total, maxPrice})
+        body: JSON.stringify({account, total, maxPrice})
     });
 
     const responseRaw = await response.json();
