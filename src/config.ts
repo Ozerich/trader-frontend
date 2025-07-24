@@ -20,7 +20,7 @@ const Configurations: Record<Environment, Configuration> = {
         EventActualTime: 60,
         EventLifeTime: 180,
         OverPriceLimitCoefficient: 1.3,
-        HighlightWords: ['positive', 'patent'],
+        HighlightWords: ['positive', 'patent', 'nvidia', 'approve', 'approval'],
     }
 };
 
