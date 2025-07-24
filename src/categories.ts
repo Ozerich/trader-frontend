@@ -1,5 +1,6 @@
 export const CATEGORIES = [
-    {id: 'fda_patents', label: 'FDA / Patents'},
+    {id: 'pharma', label: 'Pharma'},
+    {id: 'hot', label: 'Hot'},
     {id: 'crypto', label: 'Crypto'},
     {id: 'other', index: 1, label: 'Other'},
 ];
