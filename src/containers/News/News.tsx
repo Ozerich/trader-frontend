@@ -128,7 +128,7 @@ const News: React.FC<Props> = ({model, onRemove}) => {
         }
 
         if (askPrice && basePrice && askPrice >= basePrice * Config.OverPriceLimitCoefficient) {
-            return 'ASK Price is higher than 30%';
+            // return 'ASK Price is higher than 30%';
         }
 
         return null;
