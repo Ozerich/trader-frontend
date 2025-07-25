@@ -3,9 +3,8 @@ import styled, {css} from "styled-components";
 import NewsTicker from "./containers/NewsTicker.tsx";
 import Info from "./containers/Info.tsx";
 import Price from "./containers/Price/Price.tsx";
-import PriceHistory from "./components/PriceHistory.tsx";
-import {fetchLive, fetchPrice, fetchVolume, tickerInfo} from "../../services/backend.ts";
-import type {NewsEvent, NewsEventActivity} from "../../types.ts";
+import {fetchBasePrice, fetchLive, fetchPrice, fetchStats} from "../../services/backend.ts";
+import type {NewsEvent} from "../../types.ts";
 import {diffTimeInSeconds} from "./components/NewsTime/NewsTime.utils.ts";
 import NewsActions from "./containers/NewsActions.tsx";
 import {Config} from "../../config.ts";
@@ -18,63 +17,58 @@ type Props = {
 }
 
 const News: React.FC<Props> = ({model, onRemove}) => {
-    const [capitalization, setCapitalization] = useState<number | undefined>();
-    const [name, setName] = useState<string | undefined>();
+    const ticker = model.company.ticker;
+
     const [basePrice, setBasePrice] = useState<number | undefined>();
     const [askPrice, setAskPrice] = useState<number | undefined>();
     const [bidPrice, setBidPrice] = useState<number | undefined>();
     const [volume, setVolume] = useState<number | undefined>();
+    const [high, setHigh] = useState<number | null>(null);
     const [liveVolume, setLiveVolume] = useState<number | undefined>();
     const [liveDirection, setLiveDirection] = useState<'up' | 'down' | 'neutral'>('neutral');
-    const [history, setHistory] = useState<NewsEventActivity>([]);
     const [isExpired, setIsExpired] = useState<boolean>(false);
 
     useEffect(() => {
-        tickerInfo(model.ticker).then(response => {
-            setCapitalization(response.marketCap);
-            setName(response.name);
+        fetchPrice(ticker).then(response => {
+            setAskPrice(response.ask);
+            setBidPrice(response.bid);
         });
 
-        fetchVolume(model.ticker).then(response => {
-            setVolume(response);
-        });
+        fetchBasePrice(ticker).then(response => setBasePrice(response.price));
 
-        fetchPrice(model.ticker).then(response => {
-            setBasePrice(response.price.base);
-            setAskPrice(response.price.ask);
-            setBidPrice(response.price.bid);
-            setHistory(response.activity);
+        fetchStats(ticker).then(response => {
+            setVolume(response.volume);
+            setHigh(response.high);
         });
-    }, []);
+    }, [ticker]);
 
     useEffect(() => {
-        if (!isExpired) {
-            let counter = 0;
+        if (isExpired) return;
 
-            let volumeTimer: number | null;
+        let counter = 0;
 
-            setTimeout(() => {
-                fetchLive(model.ticker, 3).then(response => {
+        let volumeTimer: number | null;
+
+        setTimeout(() => {
+            fetchLive(ticker, 3).then(response => {
+                setLiveVolume(() => response.volume);
+                setLiveDirection(() => response.direction);
+            });
+
+            volumeTimer = setInterval(() => {
+                fetchLive(ticker, 3 + (counter + 1) * 5).then(response => {
                     setLiveVolume(() => response.volume);
                     setLiveDirection(() => response.direction);
                 });
 
-                volumeTimer = setInterval(() => {
-                    fetchLive(model.ticker, 3 + (counter + 1) * 5).then(response => {
-                        setLiveVolume(() => response.volume);
-                        setLiveDirection(() => response.direction);
-                    });
+                counter++;
+            }, 5000);
+        }, 2000);
 
-                    counter++;
-                }, 5000);
-            }, 2000);
-
-
-            return () => {
-                if (volumeTimer) clearInterval(volumeTimer);
-            }
+        return () => {
+            if (volumeTimer) clearInterval(volumeTimer);
         }
-    }, [isExpired]);
+    }, [isExpired, ticker]);
 
     useEffect(() => {
         if (Config.EventActualTime === -1) return;
@@ -137,22 +131,34 @@ const News: React.FC<Props> = ({model, onRemove}) => {
     const error = getError();
 
     return (
-        <Component $withError={!!error} $isExpired={isExpired} $direction={liveDirection} className="news-card">
+        <Component $withError={!!error} $isExpired={isExpired} $direction={liveDirection} className="news-card"
+                   onDoubleClick={() => onRemove(model.id)}>
             <Number>{model.number}</Number>
 
             <Header>
                 <Timer time={model.time}/>
-                <NewsTicker ticker={model.ticker} name={name}/>
+                <NewsTicker ticker={ticker}
+                            name={model.company.name}
+                            capitalization={model.company.marketCap}/>
             </Header>
 
             <PriceWrapper>
                 <Left>
-                    <Info basePrice={basePrice} volume={volume} liveVolume={liveVolume}
-                          capitalization={capitalization}/>
-                    <Price ticker={model.ticker} basePrice={basePrice} defaultAsk={askPrice} defaultBid={bidPrice}
-                           liveUpdate={!isExpired}/>
+                    <Info basePrice={basePrice}
+                          volume={volume}
+                          liveVolume={liveVolume}
+                          high={high}
+                    />
+                    <PriceRow>
+                        <Price ticker={ticker}
+                               basePrice={basePrice}
+                               defaultAsk={askPrice}
+                               high={high}
+                               defaultBid={bidPrice}
+                               liveUpdate={!isExpired}
+                        />
+                    </PriceRow>
                 </Left>
-                <PriceHistory data={history}/>
             </PriceWrapper>
 
             <Content>
@@ -163,15 +169,13 @@ const News: React.FC<Props> = ({model, onRemove}) => {
 
             <Bottom>
                 <BottomLeft>
-                    {maxPriceToBuy && !error ? <>
-                        <NewsActions ticker={model.ticker} maxPrice={maxPriceToBuy}/>
-                    </> : null}
+                    {maxPriceToBuy && !error && <NewsActions ticker={model.company.name} maxPrice={maxPriceToBuy}/>}
                     {error && <Error>{error}</Error>}
                 </BottomLeft>
                 <BottomRight>
-                    <RemoveButton onClick={() => {
-                        onRemove(model.id);
-                    }}>Remove</RemoveButton>
+                    <RemoveButton onClick={() => onRemove(model.id)}>
+                        Remove
+                    </RemoveButton>
                 </BottomRight>
             </Bottom>
         </Component>
@@ -266,11 +270,9 @@ const Subtitle = styled.p`
     }
 `
 
-
 const Bottom = styled.div`
     display: flex;
     justify-content: space-between;
-    align-items: center;
     border-top: 1px solid #ddd;
     padding: 10px 15px;
 `;
@@ -300,3 +302,11 @@ const Error = styled.div`
     padding: 5px 20px;
     font-size: 12px;
 `;
+
+
+const PriceRow = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 30px;
+`;
+

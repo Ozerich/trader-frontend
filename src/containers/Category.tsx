@@ -11,7 +11,7 @@ type Props = {
 }
 
 const Category: React.FC<Props> = ({id, name, index}) => {
-    const {removeEvent, events} = useEventsContext();
+    const {removeEvent, events, isHidden} = useEventsContext();
 
     const removeNews = (id: string) => {
         removeEvent(id);
@@ -25,11 +25,13 @@ const Category: React.FC<Props> = ({id, name, index}) => {
         return _index % categoriesCount === (index - 1);
     }) : eventsByCategory;
 
+    const visibleEvents = eventsFiltered.filter(item => !isHidden(item.id));
+
     return (
         <Column>
             <Title>{name}</Title>
             <List>
-                {(eventsFiltered.map((item) => {
+                {(visibleEvents.map((item) => {
                     return <News model={item} key={item.id}
                                  onRemove={removeNews}/>
                 }))}

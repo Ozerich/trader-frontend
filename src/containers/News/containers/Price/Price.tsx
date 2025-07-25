@@ -5,6 +5,7 @@ import styled from "styled-components";
 
 type Props = {
     ticker: string;
+    high?: number | null;
     basePrice?: number;
     defaultAsk?: number;
     defaultBid?: number;
@@ -16,35 +17,18 @@ type PriceUpdateMessage = {
     b: number
 }
 
-const Price: React.FC<Props> = ({ticker, basePrice, defaultAsk, defaultBid, liveUpdate}) => {
+const Price: React.FC<Props> = ({ticker, basePrice, defaultAsk, defaultBid, liveUpdate, high}) => {
     const listenerId = useRef<string>('');
-
-    const ref = useRef<HTMLDivElement>(null);
-    const newsContainerRef = useRef<HTMLDivElement>(null);
 
     const [ask, setAsk] = useState<number | undefined>();
     const [bid, setBid] = useState<number | undefined>();
-
-    const previousAskRef = useRef<number | undefined>(undefined);
-
-    useEffect(() => {
-        if (ref.current) {
-            newsContainerRef.current = ref.current.closest('.news-card');
-        }
-    }, [ref]);
+    const [history, setHistory] = useState<number[]>([]);
 
     const priceUpdate = (data: PriceUpdateMessage) => {
-        const previousAsk = previousAskRef.current;
-
-        if (newsContainerRef.current && previousAsk && previousAsk !== data.a) {
-            //newsContainerRef.current.classList.toggle('news-card--up', data.a > previousAsk);
-            //newsContainerRef.current.classList.toggle('news-card--down', data.a < previousAsk);
-        }
-
-        previousAskRef.current = data.a;
-
         setAsk(data.a);
         setBid(data.b);
+
+        setHistory(history => history.length === 0 || history[0] !== data.a ? [data.a, ...history.slice(0, 9)] : history);
     }
 
     useEffect(() => {
@@ -52,18 +36,14 @@ const Price: React.FC<Props> = ({ticker, basePrice, defaultAsk, defaultBid, live
             listenerId.current = subscribeTicker(ticker);
             socket.on("price_update:" + ticker, priceUpdate);
         } else {
-            if (listenerId.current) {
-                unsubscribeTicker(ticker, listenerId.current);
-            }
+            if (listenerId.current) unsubscribeTicker(ticker, listenerId.current);
             socket.off('price_update:' + ticker, priceUpdate);
         }
     }, [liveUpdate, ticker]);
 
     useEffect(() => {
         return () => {
-            if (listenerId.current) {
-                unsubscribeTicker(ticker, listenerId.current);
-            }
+            if (listenerId.current) unsubscribeTicker(ticker, listenerId.current);
             socket.off('price_update:' + ticker, priceUpdate);
         }
     }, []);
@@ -77,13 +57,27 @@ const Price: React.FC<Props> = ({ticker, basePrice, defaultAsk, defaultBid, live
         }
     }, [defaultAsk, defaultBid]);
 
-    useEffect(() => {
-
-    }, [ref]);
+    let error: string | null = null;
+    if (high && ask && ask < high) {
+        error = 'Lower than high';
+    } else if (ask && basePrice && ask > basePrice && ask / basePrice > 1.3) {
+        error = 'Higher than 30%';
+    }
 
     return (
-        <PriceWrapper ref={ref}>
-            {ask && bid && <PriceView ask={ask} bid={bid} basePrice={basePrice}/>}
+        <PriceWrapper>
+            <PriceRow>
+                {ask && bid && <PriceView ask={ask} bid={bid} basePrice={basePrice}/>}
+                {error && <PriceError>{error}</PriceError>}
+            </PriceRow>
+
+            <History>
+                {history.map((item, index) => <>
+                    <span
+                        className={index < history.length - 1 ? (item > history[index + 1] ? 'positive' : 'negative') : ''}>{item}</span>
+                    {index < history.length - 1 && <i>←</i>}
+                </>)}
+            </History>
         </PriceWrapper>
     );
 }
@@ -92,4 +86,46 @@ export default Price;
 
 const PriceWrapper = styled.div`
     min-height: 23px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+`;
+
+const PriceRow = styled.div`
+    display: flex;
+    gap: 20px;
+`;
+
+const PriceError = styled.span`
+    background: red;
+    color: #fff;
+    border-radius: 0px;
+    padding: 2px 5px;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    font-size: 10px;
+`;
+
+const History = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 3px;
+
+    span {
+        font-size: 12px;
+
+        &.positive {
+            color: green;
+        }
+
+        &.negative {
+            color: red;
+        }
+    }
+
+    i {
+        font-size: 8px;
+        transform: translateY(-2px);
+    }
 `;

@@ -1,7 +1,7 @@
 import {Config} from "./config.ts";
 
-export const formatNumber = (value: number | undefined, prefix: string = ''): string => {
-    if (value === undefined) {
+export const formatNumber = (value: number | null | undefined, prefix: string = ''): string => {
+    if (value === undefined || value === null) {
         return '-'
     }
 

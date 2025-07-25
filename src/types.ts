@@ -9,11 +9,15 @@ export type NewsEvent = {
     id: string;
     number: number;
     category: string;
+    time: string;
     title: {
         ru: string;
         en: string;
     };
     subtitle: string;
-    time: string;
-    ticker: string;
+    company: {
+        ticker: string;
+        name: string;
+        marketCap: number;
+    }
 }

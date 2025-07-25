@@ -6,13 +6,20 @@ type Props = {
     basePrice?: number;
     volume?: number;
     liveVolume?: number;
-    capitalization?: number;
+    high?: number | null;
 }
 
-const Info: React.FC<Props> = ({basePrice, volume, liveVolume, capitalization}) => {
+const Info: React.FC<Props> = ({basePrice, volume, high, liveVolume}) => {
     return (
         <Component>
-            <Param><ParamLabel>Base:</ParamLabel> <ParamValue>{formatPrice(basePrice)}</ParamValue></Param>
+            <Param>
+                <ParamLabel>Base:</ParamLabel>
+                <ParamValue>{formatPrice(basePrice)}</ParamValue>
+            </Param>
+            <Param>
+                <ParamLabel>High:</ParamLabel>
+                <ParamValue>{formatNumber(high)}</ParamValue>
+            </Param>
             <Param>
                 <ParamLabel>Volume:</ParamLabel>
                 <ParamValue>{formatNumber(volume)}</ParamValue>
@@ -21,7 +28,6 @@ const Info: React.FC<Props> = ({basePrice, volume, liveVolume, capitalization}) 
                 <ParamLabel>Live:</ParamLabel>
                 <ParamValue>{formatNumber(liveVolume)}</ParamValue>
             </Param>
-            <Param><ParamLabel>Cap:</ParamLabel> <ParamValue>{formatNumber(capitalization)}</ParamValue></Param>
         </Component>
     );
 }
