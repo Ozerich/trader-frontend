@@ -37,8 +37,8 @@ const News: React.FC<Props> = ({model, onRemove}) => {
         fetchBasePrice(ticker).then(response => setBasePrice(response.price));
 
         fetchStats(ticker).then(response => {
-            setVolume(response.volume);
-            setHigh(response.high);
+            setVolume(response?.volume || 0);
+            setHigh(response?.high || null);
         });
     }, [ticker]);
 
