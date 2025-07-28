@@ -76,7 +76,7 @@ export async function fetchStats(ticker: string): Promise<{ volume: number, high
         throw new Error(responseRaw.error);
     }
 
-    return responseRaw.result;
+    return responseRaw;
 }
 
 export async function fetchLive(ticker: string, seconds: number): Promise<{
