@@ -169,7 +169,7 @@ const News: React.FC<Props> = ({model, onRemove}) => {
 
             <Bottom>
                 <BottomLeft>
-                    {maxPriceToBuy && !error && <NewsActions ticker={model.company.name} maxPrice={maxPriceToBuy}/>}
+                    {maxPriceToBuy && !error && <NewsActions ticker={model.company.ticker} maxPrice={maxPriceToBuy}/>}
                     {error && <Error>{error}</Error>}
                 </BottomLeft>
                 <BottomRight>
