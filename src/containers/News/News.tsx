@@ -132,8 +132,7 @@ const News: React.FC<Props> = ({model, onRemove}) => {
     const error = getError();
 
     return (
-        <Component $withError={!!error} $isExpired={isExpired} $direction={liveDirection} className="news-card"
-                   onDoubleClick={() => onRemove(model.id)}>
+        <Component $withError={!!error} $isExpired={isExpired} $direction={liveDirection} className="news-card">
             <Number>{model.number}</Number>
 
             <Header>
