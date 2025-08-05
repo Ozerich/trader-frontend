@@ -24,7 +24,7 @@ const NewsActions: React.FC<Props> = ({ticker, maxPrice}) => {
         account = window.location.search?.includes('account=vital') ? 'vital' : 'krivyan';
     }
 
-    const amounts = client === 'tiger' ? (account === 'vital' ? [10, 25, 50, 75] : [1000, 5000, 10000]) : [1900, 2500, 5000, 10000];
+    const amounts = client === 'tiger' ? (account === 'vital' ? [10, 25, 50, 75] : [1000, 5000, 10000]) : [1000, 2000, 5000, 10000];
 
     const onComplete = (isSuccess: boolean, message: string) => {
         setLog([{isSuccess, message}, ...log]);
